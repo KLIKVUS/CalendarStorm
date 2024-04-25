@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/api/documentation/v' . env('CURRENT_API_VERSION'));
+
+Route::view('/api/documentation/v1', 'swagger/index')->name('documentation.index');

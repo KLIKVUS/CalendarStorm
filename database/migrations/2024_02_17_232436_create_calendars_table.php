@@ -8,21 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('calendars', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->boolean('active')->default(true);
 
-            $table->string('login')->unique();
-            $table->string('telegram_id')->nullable()->unique();
+            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
 
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('name');
+            $table->mediumText('description');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('calendars');
     }
 };

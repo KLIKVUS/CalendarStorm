@@ -1,0 +1,403 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "CalendarStorm API",
+        "description": "Документация к API продукта CalendarStorm",
+        "version": "v1"
+    },
+    "tags": [
+        {
+            "name": "Аутентификация / Регистрация"
+        },
+        {
+            "name": "Пользователь"
+        },
+        {
+            "name": "Календари пользователя"
+        },
+        {
+            "name": "Календари"
+        }
+    ],
+    "servers": [
+        {
+            "url": "https://calendar-storm.ru/api/v1",
+            "description": "Prod server"
+        },
+        {
+            "url": "https://calendar-storm.test/api/v1",
+            "description": "Dev server"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "Сохранение календаря": {
+                "description": "Схема сохранения календаря",
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "active": {
+                        "title": "Активность календаря",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "name": {
+                        "title": "Название календаря",
+                        "type": "string",
+                        "example": "test"
+                    }
+                }
+            },
+            "Изменение календаря": {
+                "description": "Схема сохранения календаря",
+                "type": "object",
+                "required": [
+                    "owner_id",
+                    "name"
+                ],
+                "properties": {
+                    "active": {
+                        "title": "Активность календаря",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "owner_id": {
+                        "title": "Id создателя календаря",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "title": "Название календаря",
+                        "type": "string",
+                        "example": "test"
+                    }
+                }
+            },
+            "Аутентификация": {
+                "type": "object",
+                "required": [
+                    "login",
+                    "password"
+                ],
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "root"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "password"
+                    }
+                }
+            },
+            "Регистрация": {
+                "type": "object",
+                "required": [
+                    "login",
+                    "password"
+                ],
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "root"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "password"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Успешно.",
+                "content": {
+                    "application/json": {}
+                }
+            },
+            "201": {
+                "description": "Успешно создано.",
+                "content": {
+                    "application/json": {}
+                }
+            },
+            "401": {
+                "description": "Ошибка аунтефикации. Возникает по причине отсутсвия Bearer token или при истичении его срока жизни."
+            },
+            "422": {
+                "description": "Ошибка при валидации переданых данных."
+            }
+        },
+        "securitySchemes": {
+            "AccessToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Можно получить после авторизации и для использования нужно передать в header запроса. Пример: 'Authorization: Bearer TOKEN'"
+            }
+        }
+    },
+    "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "Аутентификация / Регистрация"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Аутентификация"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "tags": [
+                    "Аутентификация / Регистрация"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Аутентификация"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                }
+            }
+        },
+        "/user/{user}": {
+            "get": {
+                "tags": [
+                    "Пользователь"
+                ],
+                "summary": "Информация о пользователе",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "description": "id пользователя",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            }
+        },
+        "/user/{user}/calendars": {
+            "get": {
+                "tags": [
+                    "Календари пользователя"
+                ],
+                "summary": "Список всех календарей, которые были созданы пользователем.",
+                "description": "Вернет список календарей, которые были созданы пользователем, чей token был передан в header. Для получения списка календарей неоходимо пройти авторизацию.",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "description": "id пользователя",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                }
+            }
+        },
+        "/calendars": {
+            "get": {
+                "tags": [
+                    "Календари"
+                ],
+                "summary": "Список всех календарей.",
+                "description": "Вернет список всех календарей с пагинацией.",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Календари"
+                ],
+                "summary": "Создание календаря.",
+                "description": "Позволяет создать календарь. Для создания необходимо пройти авторизацию.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Сохранение календаря"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            }
+        },
+        "/calendars/{calendar}": {
+            "get": {
+                "tags": [
+                    "Календари"
+                ],
+                "summary": "Информация о календаре.",
+                "description": "Вернет информацию о календаре.",
+                "parameters": [
+                    {
+                        "name": "calendar",
+                        "description": "id календаря",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Календари"
+                ],
+                "summary": "Изменение календаря.",
+                "description": "Позволяет создать календарь. Для создания необходимо пройти авторизацию.",
+                "parameters": [
+                    {
+                        "name": "calendar",
+                        "description": "id календаря",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Изменение календаря"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Календари"
+                ],
+                "summary": "Удаление календаря.",
+                "description": "Позволяет удалить календарь.",
+                "parameters": [
+                    {
+                        "name": "calendar",
+                        "description": "id календаря",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            }
+        }
+    }
+}
