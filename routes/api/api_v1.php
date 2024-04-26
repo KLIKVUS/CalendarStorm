@@ -21,13 +21,13 @@ use App\Http\Controllers\Api\v1\UserCalendarController;
 
 Route::prefix('/auth')->name('auth.')->group(function () {
     Route::middleware('guest:sanctum')->group(function () {
-        Route::post('/login', [LoginController::class, 'store'])->name('access-token.store');
-        Route::post('/register', [RegisterController::class, 'store'])->name('access-token.store');
+        Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+        Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::delete('/logout', [LogoutController::class, 'destroy'])->name('access-token.destroy');
-        Route::delete('/refresh', [RefreshController::class, 'destroy'])->name('access-token.destroy');
+        Route::delete('/logout', [LogoutController::class, 'destroy'])->name('logout.destroy');
+        Route::delete('/refresh', [RefreshController::class, 'destroy'])->name('refresh.destroy');
     });
 });
 

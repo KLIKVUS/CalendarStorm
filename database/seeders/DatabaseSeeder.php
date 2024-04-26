@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         User::factory()
             ->create([
                 'login' => 'root',
-                'password' => '12345678',
+                'password' => 'password',
             ]);
 
         Calendar::factory()

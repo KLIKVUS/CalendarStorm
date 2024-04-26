@@ -13,6 +13,7 @@ class Event extends Model
         'active',
 
         'calendar_id',
+        'owner_id',
 
         'name',
         'description',
