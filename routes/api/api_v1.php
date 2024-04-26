@@ -39,10 +39,6 @@ Route::prefix('/user/{user}')->name('user.')->group(function () {
     Route::prefix('/calendars')->name('calendars.')->group(function () {
         Route::get('/', [UserCalendarController::class, 'index'])->name('index');
     });
-
-    Route::prefix('/events')->name('events.')->group(function () {
-        Route::get('/', [UserCalendarController::class, 'index'])->name('index');
-    });
 });
 
 Route::prefix('/calendars')->name('calendars.')->group(function () {
