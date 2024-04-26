@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Http\Controllers\Api\TokensController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -29,11 +30,10 @@ class LoginController extends Controller
             ], 422);
         }
 
+        $tokens = (new TokensController())->createUserTokens($user);
+
         return response()->json([
-            'data' => [
-                'access_token' => $user->createToken('access_token')->plainTextToken,
-                'refresh_token' => $user->createToken('refresh_token', ['tokens:refresh'])->plainTextToken,
-            ],
+            'data' => $tokens,
             'success' => true,
         ]);
     }

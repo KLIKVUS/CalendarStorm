@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Http\Controllers\Api\TokensController;
 
 class RegisterController extends Controller
 {
@@ -26,12 +26,11 @@ class RegisterController extends Controller
         }
 
         $newUser = User::create($validated);
+    
+        $tokens = (new TokensController())->createUserTokens($newUser);
 
         return response()->json([
-            'data' => [
-                'access_token' => $newUser->createToken('access_token')->plainTextToken,
-                'refresh_token' => $newUser->createToken('refresh_token', ['tokens:refresh'])->plainTextToken,
-            ],
+            'data' => $tokens,
             'success' => true,
         ], 201);
     }

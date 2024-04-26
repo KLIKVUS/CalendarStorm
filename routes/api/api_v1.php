@@ -1,11 +1,11 @@
 <?php
 
+use App\Enums\TokenAbility;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\v1\CalendarController;
 use App\Http\Controllers\Api\Auth\RefreshController;
 use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\v1\CalendarController;
 use App\Http\Controllers\Api\v1\UserCalendarController;
 
 /*
@@ -26,8 +26,7 @@ Route::prefix('/auth')->name('auth.')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::delete('/logout', [LogoutController::class, 'destroy'])->name('logout.destroy');
-        Route::delete('/refresh', [RefreshController::class, 'destroy'])->name('refresh.destroy');
+        Route::delete('/refresh', [RefreshController::class, 'destroy'])->name('refresh.destroy')->middleware(['ability:' . TokenAbility::ISSUE_ACCESS_TOKEN->value]);
     });
 });
 
