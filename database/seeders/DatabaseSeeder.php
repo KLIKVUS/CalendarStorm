@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Calendar;
+use App\Models\CalendarEvent;
 use App\Models\Event;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -23,6 +24,10 @@ class DatabaseSeeder extends Seeder
             ->create();
 
         Event::factory()
+            ->count(500)
+            ->create();
+
+        CalendarEvent::factory()
             ->count(500)
             ->create();
     }

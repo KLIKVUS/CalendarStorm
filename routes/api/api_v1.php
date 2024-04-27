@@ -2,11 +2,13 @@
 
 use App\Enums\TokenAbility;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\v1\EventsController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\v1\CalendarController;
 use App\Http\Controllers\Api\Auth\RefreshController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\v1\UserCalendarController;
+use App\Http\Controllers\Api\v1\CalendarEventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,15 +51,22 @@ Route::prefix('/calendars')->name('calendars.')->group(function () {
         Route::put('/{calendar}', [CalendarController::class, 'update'])->name('update');
         Route::delete('/{calendar}', [CalendarController::class, 'delete'])->name('delete');
     });
+
+    Route::prefix('/{calendar}/events')->name('events.')->group(function () {
+        Route::get('/', [CalendarEventController::class, 'index'])->name('index');
+    
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/', [CalendarEventController::class, 'store'])->name('store');
+        });
+    });
 });
 
 Route::prefix('/events')->name('events.')->group(function () {
-    Route::get('/', [CalendarController::class, 'index'])->name('index');
-    Route::get('/{calendar}', [CalendarController::class, 'show'])->name('show');
+    Route::get('/', [EventsController::class, 'index'])->name('index');
+    Route::get('/{calendar}', [EventsController::class, 'show'])->name('show');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/', [CalendarController::class, 'store'])->name('store');
-        Route::put('/{calendar}', [CalendarController::class, 'update'])->name('update');
-        Route::delete('/{calendar}', [CalendarController::class, 'delete'])->name('delete');
+        Route::put('/{calendar}', [EventsController::class, 'update'])->name('update');
+        Route::delete('/{calendar}', [EventsController::class, 'delete'])->name('delete');
     });
 });
