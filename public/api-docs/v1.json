@@ -9,7 +9,9 @@
         { "name": "Аутентификация / Регистрация" },
         { "name": "Пользователь" },
         { "name": "Календари пользователя" },
-        { "name": "Календари" }
+        { "name": "Календари" },
+        { "name": "Ивенты календаря" },
+        { "name": "Ивенты" }
     ],
     "servers": [
         {
@@ -23,45 +25,6 @@
     ],
     "components": {
         "schemas": {
-            "Сохранение календаря": {
-                "description": "Схема сохранения календаря",
-                "type": "object",
-                "required": ["name"],
-                "properties": {
-                    "active": {
-                        "title": "Активность календаря",
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "name": {
-                        "title": "Название календаря",
-                        "type": "string",
-                        "example": "test"
-                    }
-                }
-            },
-            "Изменение календаря": {
-                "description": "Схема сохранения календаря",
-                "type": "object",
-                "required": ["owner_id", "name"],
-                "properties": {
-                    "active": {
-                        "title": "Активность календаря",
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "owner_id": {
-                        "title": "Id создателя календаря",
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "name": {
-                        "title": "Название календаря",
-                        "type": "string",
-                        "example": "test"
-                    }
-                }
-            },
             "Аутентификация": {
                 "type": "object",
                 "required": ["login", "password"],
@@ -89,6 +52,131 @@
                         "example": "password"
                     }
                 }
+            },
+            "Сохранение календаря": {
+                "description": "Схема сохранения календаря",
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                    "active": {
+                        "title": "Активность календаря",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "name": {
+                        "title": "Название календаря",
+                        "type": "string",
+                        "example": "test"
+                    }
+                }
+            },
+            "Изменение календаря": {
+                "description": "Схема сохранения календаря",
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "title": "Активность календаря",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "owner_id": {
+                        "title": "Id создателя календаря",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "title": "Название календаря",
+                        "type": "string",
+                        "example": "test"
+                    }
+                }
+            },
+            "Сохранение ивента": {
+                "description": "Схема сохранения ивента",
+                "type": "object",
+                "required": ["name", "color"],
+                "properties": {
+                    "active": {
+                        "title": "Активность ивента",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "name": {
+                        "title": "Название ивента",
+                        "type": "string",
+                        "example": "test"
+                    },
+                    "description": {
+                        "title": "Описание ивента",
+                        "type": "string",
+                        "example": "test description"
+                    },
+                    "link": {
+                        "title": "Ссылка на ивент",
+                        "type": "string",
+                        "example": "https://test.com"
+                    },
+                    "color": {
+                        "title": "Цвет ивента",
+                        "type": "string",
+                        "example": "#fff"
+                    },
+                    "beginning": {
+                        "title": "Дата начала ивента",
+                        "description": "Формат YYYY-MM-DD HH:MM:SS",
+                        "type": "dateTime",
+                        "example": "2024-04-27 06:58:09"
+                    },
+                    "ending": {
+                        "title": "Дата окончания ивента",
+                        "description": "Формат YYYY-MM-DD HH:MM:SS",
+                        "type": "dateTime",
+                        "example": "024-04-29 16:58:09"
+                    }
+                }
+            },
+            "Изменение ивента": {
+                "description": "Схема сохранения ивента",
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "title": "Активность ивента",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "name": {
+                        "title": "Название ивента",
+                        "type": "string",
+                        "example": "test"
+                    },
+                    "description": {
+                        "title": "Описание ивента",
+                        "type": "string",
+                        "example": "test description"
+                    },
+                    "link": {
+                        "title": "Ссылка на ивент",
+                        "type": "string",
+                        "example": "https://test.com"
+                    },
+                    "color": {
+                        "title": "Цвет ивента",
+                        "type": "string",
+                        "example": "#fff"
+                    },
+                    "beginning": {
+                        "title": "Дата начала ивента",
+                        "description": "Формат YYYY-MM-DD HH:MM:SS",
+                        "type": "dateTime",
+                        "example": "2024-04-27 06:58:09"
+                    },
+                    "ending": {
+                        "title": "Дата окончания ивента",
+                        "description": "Формат YYYY-MM-DD HH:MM:SS",
+                        "type": "dateTime",
+                        "example": "024-04-29 16:58:09"
+                    }
+                }
             }
         },
         "responses": {
@@ -105,10 +193,16 @@
                 }
             },
             "401": {
-                "description": "Ошибка аунтефикации. Возникает по причине отсутсвия Bearer token или при истичении его срока жизни."
+                "description": "Ошибка аунтефикации. Возникает по причине отсутсвия Bearer token или при истичении его срока жизни.",
+                "content": {
+                    "application/json": {}
+                }
             },
             "422": {
-                "description": "Ошибка при валидации переданых данных."
+                "description": "Ошибка при валидации переданых данных.",
+                "content": {
+                    "application/json": {}
+                }
             }
         },
         "securitySchemes": {
@@ -116,7 +210,7 @@
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT",
-                "description": "Можно получить после авторизации и для использования нужно передать в header запроса. Пример: 'Authorization: Bearer TOKEN'"
+                "description": "Можно получить после аутентификации и для использования нужно передать в header запроса. Пример: 'Authorization: Bearer TOKEN'"
             }
         }
     },
@@ -186,6 +280,9 @@
                 "responses": {
                     "200": {
                         "$ref": "#/components/responses/200"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
                     }
                 },
                 "security": [
@@ -199,7 +296,7 @@
             "get": {
                 "tags": ["Календари пользователя"],
                 "summary": "Список всех календарей, которые были созданы пользователем.",
-                "description": "Вернет список календарей, которые были созданы пользователем, чей token был передан в header. Для получения списка календарей неоходимо пройти авторизацию.",
+                "description": "Вернет список календарей, которые были созданы пользователем, чей token был передан в header. Для получения списка календарей необходимо пройти аутентификацию.",
                 "parameters": [
                     {
                         "name": "user",
@@ -218,6 +315,9 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
                     }
                 }
             }
@@ -236,7 +336,7 @@
             "post": {
                 "tags": ["Календари"],
                 "summary": "Создание календаря.",
-                "description": "Позволяет создать календарь. Для создания необходимо пройти авторизацию.",
+                "description": "Позволяет создать календарь. Для создания необходимо пройти аутентификацию.",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -285,13 +385,16 @@
                 "responses": {
                     "200": {
                         "$ref": "#/components/responses/200"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
                     }
                 }
             },
             "put": {
                 "tags": ["Календари"],
                 "summary": "Изменение календаря.",
-                "description": "Позволяет создать календарь. Для создания необходимо пройти авторизацию.",
+                "description": "Позволяет изменить календарь. Для изменения необходимо пройти аутентификацию.",
                 "parameters": [
                     {
                         "name": "calendar",
@@ -353,6 +456,194 @@
                     },
                     "401": {
                         "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            }
+        },
+        "/calendars/{calendar}/events": {
+            "get": {
+                "tags": ["Ивенты календаря"],
+                "summary": "Список ивентов, которые принадлежат календарю.",
+                "description": "Вернет список ивентов, которые принадлежат календарю.",
+                "parameters": [
+                    {
+                        "name": "calendar",
+                        "description": "id календаря",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Ивенты календаря"],
+                "summary": "Создать ивент, который будет иметь связь с календарем.",
+                "description": "Позволяет создать ивент, который будет иметь связь с календарем. Для создания необходимо пройти аутентификацию.",
+                "parameters": [
+                    {
+                        "name": "calendar",
+                        "description": "id календаря",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Сохранение ивента"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/201"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            }
+        },
+        "/events": {
+            "get": {
+                "tags": ["Ивенты"],
+                "summary": "Список всех ивентов.",
+                "description": "Вернет список всех ивентов с пагинацией.",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    }
+                }
+            }
+        },
+        "/events/{event}": {
+            "get": {
+                "tags": ["Ивенты"],
+                "summary": "Информация о ивенте.",
+                "description": "Вернет информацию о ивенте.",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "description": "id ивента",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Ивенты"],
+                "summary": "Изменение ивента.",
+                "description": "Позволяет изменить ивент. Для изменения необходимо пройти аутентификацию.",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "description": "id ивента",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Изменение ивента"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
+                    }
+                },
+                "security": [
+                    {
+                        "AccessToken": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["Ивенты"],
+                "summary": "Удаление ивента.",
+                "description": "Позволяет удалить ивент.",
+                "parameters": [
+                    {
+                        "name": "event",
+                        "description": "id ивента",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/200"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/422"
                     }
                 },
                 "security": [

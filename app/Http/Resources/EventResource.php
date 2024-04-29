@@ -12,14 +12,14 @@ class EventResource extends JsonResource
         return [
             'id' => $this->id,
             'created_at' => $this->created_at,
-            'active' => $this->when(nullValue($this->active), 1, 0),
+            'active' => $this->whenNotNull($this->active, true),
 
             'name' => $this->name,
             'description' => $this->description,
             'link' => $this->link,
             'color' => $this->color,
-            'beginning' => $this->beginning->format('d.m.Y'),
-            'ending' => $this->ending->format('d.m.Y'),
+            'beginning' => $this->beginning,
+            'ending' => $this->ending,
         ];
     }
 }

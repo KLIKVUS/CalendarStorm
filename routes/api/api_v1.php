@@ -49,7 +49,7 @@ Route::prefix('/calendars')->name('calendars.')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [CalendarController::class, 'store'])->name('store');
         Route::put('/{calendar}', [CalendarController::class, 'update'])->name('update');
-        Route::delete('/{calendar}', [CalendarController::class, 'delete'])->name('delete');
+        Route::delete('/{calendar}', [CalendarController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('/{calendar}/events')->name('events.')->group(function () {
@@ -63,10 +63,10 @@ Route::prefix('/calendars')->name('calendars.')->group(function () {
 
 Route::prefix('/events')->name('events.')->group(function () {
     Route::get('/', [EventsController::class, 'index'])->name('index');
-    Route::get('/{calendar}', [EventsController::class, 'show'])->name('show');
+    Route::get('/{event}', [EventsController::class, 'show'])->name('show');
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::put('/{calendar}', [EventsController::class, 'update'])->name('update');
-        Route::delete('/{calendar}', [EventsController::class, 'delete'])->name('delete');
+        Route::put('/{event}', [EventsController::class, 'update'])->name('update');
+        Route::delete('/{event}', [EventsController::class, 'destroy'])->name('destroy');
     });
 });

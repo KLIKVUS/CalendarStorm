@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CalendarResource;
+use App\Http\Requests\Event\StoreRequest;
+use App\Http\Resources\EventResource;
 use App\Models\Calendar;
+use App\Models\CalendarEvent;
+use App\Models\Event;
 
 class CalendarEventController extends Controller
 {
@@ -12,13 +15,29 @@ class CalendarEventController extends Controller
     {
         $calendar_events = $calendar->events;
 
-        return CalendarResource::collection($calendar_events)
+        return EventResource::collection($calendar_events)
             ->additional([
                 'success' => true,
             ]);
     }
 
-    public function store()
+    public function store(Calendar $calendar, StoreRequest $request)
     {
+        $data = $request->validated();
+        $calendar_id = $calendar->id;
+        $user_id = auth()->user()->id;
+        $event = Event::create(array_merge($data, ['calendar_id' => $calendar_id, 'owner_id' => $user_id]));
+        $event_id = $event->id;
+
+        CalendarEvent::create([
+            'calendar_id' => $calendar_id,
+            'event_id' => $event_id,
+        ]);
+
+        return EventResource::make($event)
+            ->additional([
+                'success' => true,
+                'message' => 'Ивент сохранен.',
+            ]);
     }
 }
