@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\EventsController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\v1\CalendarController;
-use App\Http\Controllers\Api\Auth\RefreshController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\v1\UserCalendarController;
 use App\Http\Controllers\Api\v1\CalendarEventController;
@@ -21,15 +20,9 @@ use App\Http\Controllers\Api\v1\CalendarEventController;
 |
 */
 
-Route::prefix('/auth')->name('auth.')->group(function () {
-    Route::middleware('guest:sanctum')->group(function () {
-        Route::post('/login', [LoginController::class, 'store'])->name('login.store');
-        Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
-    });
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::delete('/refresh', [RefreshController::class, 'destroy'])->name('refresh.destroy')->middleware(['ability:' . TokenAbility::ISSUE_ACCESS_TOKEN->value]);
-    });
+Route::prefix('/auth')->name('auth.')->middleware('guest:sanctum')->group(function () {
+    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 });
 
 Route::prefix('/user/{user}')->name('user.')->group(function () {
@@ -54,7 +47,7 @@ Route::prefix('/calendars')->name('calendars.')->group(function () {
 
     Route::prefix('/{calendar}/events')->name('events.')->group(function () {
         Route::get('/', [CalendarEventController::class, 'index'])->name('index');
-    
+
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [CalendarEventController::class, 'store'])->name('store');
         });

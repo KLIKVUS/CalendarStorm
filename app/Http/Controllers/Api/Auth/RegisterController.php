@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Models\User;
+use App\Enums\TokenAbility;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rules\Password;
-use App\Http\Controllers\Api\TokensController;
 
 class RegisterController extends Controller
 {
@@ -27,10 +27,12 @@ class RegisterController extends Controller
 
         $newUser = User::create($validated);
     
-        $tokens = (new TokensController())->createUserTokens($newUser);
+        $access_token = $newUser->createToken('access_token', [TokenAbility::ACCESS_API->value])->plainTextToken;
 
         return response()->json([
-            'data' => $tokens,
+            'data' => [
+                'access_token' => $access_token,
+            ],
             'success' => true,
         ], 201);
     }

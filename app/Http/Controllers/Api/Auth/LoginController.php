@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Api\TokensController;
 use App\Models\User;
+use App\Enums\TokenAbility;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -30,10 +30,12 @@ class LoginController extends Controller
             ], 422);
         }
 
-        $tokens = (new TokensController())->createUserTokens($user);
+        $access_token = $user->createToken('access_token', [TokenAbility::ACCESS_API->value])->plainTextToken;
 
         return response()->json([
-            'data' => $tokens,
+            'data' => [
+                'access_token' => $access_token,
+            ],
             'success' => true,
         ]);
     }
