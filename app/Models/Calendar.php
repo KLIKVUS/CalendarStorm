@@ -26,6 +26,7 @@ class Calendar extends Model
     protected $appends = [
         'is_user_can_update',
         'is_user_can_delete',
+        'is_user_can_create_events',
     ];
 
     protected function isUserCanUpdate(): Attribute
@@ -40,6 +41,17 @@ class Calendar extends Model
     }
 
     protected function isUserCanDelete(): Attribute
+    {
+        return new Attribute(
+            get: function () {
+                $user = auth()->user();
+
+                return $user && $user->id === $this->owner_id;
+            },
+        );
+    }
+    
+    protected function isUserCanCreateEvents(): Attribute
     {
         return new Attribute(
             get: function () {

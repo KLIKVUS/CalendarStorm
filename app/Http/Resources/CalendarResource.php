@@ -19,6 +19,7 @@ class CalendarResource extends JsonResource
             'rights_of_the_current_user' => [
                 $this->attributes(['is_user_can_update']),
                 $this->attributes(['is_user_can_delete']),
+                $this->attributes(['is_user_can_create_events']),
             ],
         ];
     }
