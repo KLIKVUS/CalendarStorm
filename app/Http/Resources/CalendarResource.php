@@ -14,7 +14,6 @@ class CalendarResource extends JsonResource
             'created_at' => $this->created_at,
             'active' => $this->whenNotNull($this->active, true),
 
-            'owner_id' => $this->owner_id,
             'name' => $this->name,
 
             'rights_of_the_current_user' => [
