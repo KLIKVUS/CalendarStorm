@@ -210,7 +210,7 @@
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT",
-                "description": "Можно получить после аутентификации и для использования нужно передать в header запроса. Пример: 'Authorization: Bearer TOKEN'"
+                "description": "Можно получить после аутентификации и для использования нужно передать в `header` запроса. Пример: `'Authorization: Bearer TOKEN'`"
             }
         }
     },
@@ -284,12 +284,7 @@
                     "422": {
                         "$ref": "#/components/responses/422"
                     }
-                },
-                "security": [
-                    {
-                        "AccessToken": []
-                    }
-                ]
+                }
             }
         },
         "/user/{user}/calendars": {
