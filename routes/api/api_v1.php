@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\TokenAbility;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\EventsController;
 use App\Http\Controllers\Api\Auth\LoginController;
