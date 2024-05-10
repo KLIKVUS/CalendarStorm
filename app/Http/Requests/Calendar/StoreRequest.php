@@ -17,6 +17,7 @@ class StoreRequest extends FormRequest
             'active' => ['boolean'],
 
             'name' => ['required', 'string'],
+            'description' => ['string'],
         ];
     }
 }

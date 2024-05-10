@@ -17,6 +17,7 @@ class Calendar extends Model
         'owner_id',
 
         'name',
+        'description',
     ];
 
     protected $casts = [

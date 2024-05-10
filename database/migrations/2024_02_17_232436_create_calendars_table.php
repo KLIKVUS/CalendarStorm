@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
 
             $table->string('name');
-            $table->mediumText('description');
+            $table->mediumText('description')->nullable();
         });
     }
 

@@ -20,7 +20,11 @@
         },
         {
             "url": "https://calendar-storm.test/api/v1",
-            "description": "Dev server"
+            "description": "Dev server1"
+        },
+        {
+            "url": "http://127.0.0.1:8000/api/v1",
+            "description": "Dev server2"
         }
     ],
     "components": {

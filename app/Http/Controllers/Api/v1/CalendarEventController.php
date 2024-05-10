@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Events\CalendarEventsUpdate;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\StoreRequest;
 use App\Http\Resources\EventResource;
@@ -33,6 +34,8 @@ class CalendarEventController extends Controller
             'calendar_id' => $calendar_id,
             'event_id' => $event_id,
         ]);
+
+        CalendarEventsUpdate::dispatch($calendar);
 
         return EventResource::make($event)
             ->additional([

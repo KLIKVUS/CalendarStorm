@@ -29,6 +29,7 @@
     <div id="swagger-api"></div>
 
     @vite('resources/js/swagger.js')
+    @vite('resources/js/app.js')
 </body>
 
 </html>
