@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -51,7 +52,7 @@ class Calendar extends Model
             },
         );
     }
-    
+
     protected function isUserCanCreateEvents(): Attribute
     {
         return new Attribute(
@@ -65,6 +66,16 @@ class Calendar extends Model
 
     public function events(): BelongsToMany
     {
-        return $this->belongsToMany(Event::class)->using(CalendarEvent::class);
+        return $this->belongsToMany(Event::class)->when(
+            auth()->user(),
+            function (Builder $query, User $user) {
+                if ($this->owner_id != $user->id)
+                    $query->where('active', true);
+            },
+            function (Builder $query) {
+                $query->where('active', true);
+            }
+        )
+            ->using(CalendarEvent::class);
     }
 }

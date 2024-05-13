@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Event\UpdateRequest;
-use App\Http\Resources\EventResource;
 use App\Models\Event;
+use App\Events\CalendarEventsUpdate;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\EventResource;
+use App\Http\Requests\Event\UpdateRequest;
 
 class EventsController extends Controller
 {
@@ -32,6 +33,8 @@ class EventsController extends Controller
         $data = $request->validated();
         $event->update($data);
 
+        CalendarEventsUpdate::dispatch($event->calendar);
+
         return EventResource::make($event)
             ->additional([
                 'success' => true,
@@ -42,6 +45,8 @@ class EventsController extends Controller
     public function destroy(Event $event)
     {
         $event->delete();
+
+        CalendarEventsUpdate::dispatch($event->calendar);
 
         return response()->json([
             'success' => true,
