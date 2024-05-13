@@ -306,6 +306,15 @@
                             "example": 1,
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "page",
+                        "description": "номер страницы",
+                        "in": "query",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -326,6 +335,17 @@
                 "tags": ["Календари"],
                 "summary": "Список всех календарей.",
                 "description": "Вернет список всех календарей с пагинацией.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "description": "номер страницы",
+                        "in": "query",
+                        "schema": {
+                            "example": 1,
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "$ref": "#/components/responses/200"

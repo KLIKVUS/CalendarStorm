@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Models\Calendar;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CalendarResource;
 use App\Http\Requests\Calendar\StoreRequest;
 use App\Http\Requests\Calendar\UpdateRequest;
-use App\Http\Resources\CalendarResource;
-use App\Models\Calendar;
 
 class CalendarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $calendars = Calendar::all();
+        $data = $request->validate([
+            'page' => ['integer'],
+        ]);
+        $calendars = Calendar::simplePaginate(10, ['*'], 'page', $data['page'] ?? 1);
 
         return CalendarResource::collection($calendars)
             ->additional([
