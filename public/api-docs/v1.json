@@ -16,15 +16,11 @@
     "servers": [
         {
             "url": "https://calendar-storm.online/api/v1",
-            "description": "Prod server"
+            "description": "Prod"
         },
         {
-            "url": "https://calendar-storm.test/api/v1",
-            "description": "Dev server1"
-        },
-        {
-            "url": "http://127.0.0.1:8000/api/v1",
-            "description": "Dev server2"
+            "url": "http://0.0.0.0/api/v1",
+            "description": "Local dev"
         }
     ],
     "components": {

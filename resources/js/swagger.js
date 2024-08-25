@@ -10,8 +10,7 @@ SwaggerUI({
     requestInterceptor: (req) => {
         const authorized = JSON.parse(localStorage.getItem("authorized"));
 
-        if (authorized?.AccessToken)
-            req.headers.Authorization = "Bearer " + authorized.AccessToken.value;
+        if (authorized?.AccessToken) req.headers.Authorization = "Bearer " + authorized.AccessToken.value;
 
         return req;
     },
