@@ -12,7 +12,8 @@
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^4.0",
         "laravel/telescope": "^5.0",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "nextapps/laravel-swagger-ui": "^0.10.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
