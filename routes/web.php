@@ -12,3 +12,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::view('/', 'pages.home.index')->name('home.index');
+
+Route::view('/calendar', 'pages.calendar.index')->name('calendar.index');

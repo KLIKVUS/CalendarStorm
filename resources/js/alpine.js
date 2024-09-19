@@ -1,0 +1,14 @@
+import Alpine from "alpinejs";
+import collapse from "@alpinejs/collapse";
+import persist from "@alpinejs/persist";
+
+window.Alpine = Alpine;
+
+Alpine.plugin(collapse);
+Alpine.plugin(persist);
+
+document.addEventListener("alpine:init", () => {
+    // Alpine.data("", func);
+});
+
+Alpine.start();
