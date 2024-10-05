@@ -1,14 +1,12 @@
-<nav class="dark:bg-gray-900 sticky top-0 border-gray-200 bg-white py-5 md:px-0"
+<nav class="border-gray-200 bg-inherit py-5 pl-2 md:px-0"
     x-data="{ search__open: false, menu__open: false }">
-    <div class="mx-auto flex flex-wrap items-center justify-between lg:gap-5">
-        <div class="flex-1">
+    <div class="mx-auto flex flex-wrap items-stretch justify-between lg:gap-5">
+        <div class="flex flex-1 items-center">
             <a class="flex items-center"
                 href="{{ route('home.index') }}">
-                {{-- <img
-                class="mr-3 h-8"
-                src="https://flowbite.com/docs/images/logo.svg"
-                alt="Flowbite Logo"
-            /> --}}
+                {{-- <img class="mr-3 h-8"
+                    src="https://flowbite.com/docs/images/logo.svg"
+                    alt="Flowbite Logo" /> --}}
                 <span class="dark:text-white self-center whitespace-nowrap text-2xl font-semibold">{{ config('app.name') }}</span>
             </a>
         </div>
@@ -25,7 +23,7 @@
             </x-header.mobile-button>
             <x-header.search class="hidden lg:block" />
         </div>
-        <div class="mt-5 w-full items-center justify-between lg:order-1 lg:mt-0 lg:!flex lg:w-auto lg:flex-1 lg:justify-end">
+        <div class="w-full items-center justify-between lg:order-1 lg:!flex lg:w-auto lg:flex-1 lg:justify-end">
             <div x-collapse
                 x-show="search__open"
                 @click.outside="search__open = false">

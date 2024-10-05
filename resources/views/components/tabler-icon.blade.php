@@ -3,4 +3,6 @@
     'svg',
 ])
 
-<i {{ $attributes->merge(['class' => "ti ti-$svg text-$size"]) }}></i>
+<i {{ $attributes->merge(['class' => "ti ti-$svg text-$size"]) }}>
+    {{ $slot }}
+</i>

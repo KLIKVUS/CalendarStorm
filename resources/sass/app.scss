@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-@import 'tabler-icons.scss';
+@import "tabler-icons.scss";
 
-[x-cloak] { display: none !important; }
+[x-cloak] {
+    display: none !important;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 0.625rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #9e9e9e80;
+}
+.dark ::-webkit-scrollbar-track {
+    background: #302f2f80;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #9b9ea3;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #374151;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #7a7d81;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+}

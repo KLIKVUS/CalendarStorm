@@ -19,7 +19,7 @@
             "description": "Prod"
         },
         {
-            "url": "http://0.0.0.0/api/v1",
+            "url": "http://localhost/api/v1",
             "description": "Local dev"
         }
     ],
