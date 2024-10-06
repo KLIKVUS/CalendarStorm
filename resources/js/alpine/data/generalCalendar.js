@@ -100,11 +100,11 @@ export default function () {
             /**
              * @private
              *
-             * @type {{saved_month_index: string, saved_month_offset: number}}
+             * @type {{saved_month_index: string, saved_calendar_scroll_top: number}}
              */
             _scroll_data: {
                 saved_month_index: undefined,
-                saved_month_offset: undefined,
+                saved_calendar_scroll_top: undefined,
             },
         },
 
@@ -114,14 +114,15 @@ export default function () {
         init() {
             let today = new Date();
 
-            this._selectMonth(today.getFullYear(), today.getMonth());
+            this.selectMonth(today.getFullYear(), today.getMonth());
+            this.initSelectedMonth();
         },
 
         /**
-         * Инициализация прошлого и текущего месяца
+         * Инициализация выбранного месяца
          */
-        initMonths() {
-            this.__debug("initMonths", "start");
+        initSelectedMonth() {
+            this.__debug("initSelectedMonth", "start");
 
             this._addMonth({
                 add_type: "init",
@@ -129,30 +130,20 @@ export default function () {
                 month: this.calendar_data.selected_month,
             });
 
-            this.calendar_data.is_scrolled = false;
-            this.calendar_data.is_initialized = false;
-
-            /* this.$nextTick(() => {
-                const { year, month } = this._adjustMonth({ offset: -1 });
-                const calendar_end_date = new Date(this.calendar_data.start_date.getTime());
-                calendar_end_date.setDate(calendar_end_date.getDate() - 1);
-
-                this._saveScrollPos();
-                this._addMonth({
-                    add_type: "unshift",
-                    year,
-                    month,
-                    calendar_end_date,
-                });
-            }).then(async () => {
-                this.calendar_data.is_scrolled = await this._scrollToSavedScrollPos();
-                this.calendar_data.is_initialized = true;
-
-                this.__debug("initMonths", "done");
-            }); */
-
-            this.calendar_data.is_scrolled = true;
             this.calendar_data.is_initialized = true;
+
+            this.__debug("initSelectedMonth", "done");
+        },
+
+        /**
+         * Задает в качестве выбранного месяца переданный месяц
+         * @param {number} year - Год
+         * @param {number} month - Месяц
+         */
+        selectMonth(year, month) {
+            this.calendar_data.selected_year = year;
+            this.calendar_data.selected_month = month;
+            this.calendar_data.selected_month_name = MONTH_NAMES[month];
         },
 
         // Проверочные функции
@@ -198,7 +189,7 @@ export default function () {
         switchToCurrentMonth() {
             let today = new Date();
 
-            this._selectMonth(today.getFullYear(), today.getMonth());
+            this.selectMonth(today.getFullYear(), today.getMonth());
 
             this.initWeeksData();
         },
@@ -208,7 +199,7 @@ export default function () {
         switchToPreviousMonth() {
             let { year, month } = this._adjustMonth({ offset: -1 });
 
-            this._selectMonth(year, month);
+            this.selectMonth(year, month);
 
             this.initWeeksData();
         },
@@ -218,7 +209,7 @@ export default function () {
         switchToNextMonth() {
             let { year, month } = this._adjustMonth({ offset: 1 });
 
-            this._selectMonth(year, month);
+            this.selectMonth(year, month);
 
             this.initWeeksData();
         },
@@ -236,8 +227,8 @@ export default function () {
         handleIntersectEnterMonth(month_index, year, month, month_index_in_array) {
             this.__debug("handleIntersectEnterMonth", "start");
 
-            if (!this.calendar_data.is_scrolled || !this.calendar_data.is_initialized) return;
-            if (!this.isSelectedMonth(year, month)) this._selectMonth(year, month);
+            if (!this.calendar_data.is_initialized) return;
+            if (!this.isSelectedMonth(year, month)) this.selectMonth(year, month);
 
             this.calendar_data.calendar_months[month_index_in_array].is_shown = true;
 
@@ -280,14 +271,12 @@ export default function () {
             if (add_month_params.length === 0) return;
 
             this.calendar_data.is_scrolled = false;
-            this.calendar_data.is_initialized = false;
 
             this.$nextTick(async () => {
                 this._saveScrollPos(month_index);
                 add_month_params.forEach((add_month_param) => this._addMonth(add_month_param));
             }).then(async () => {
                 this.calendar_data.is_scrolled = await this._scrollToSavedScrollPos();
-                this.calendar_data.is_initialized = true;
 
                 this.__debug("handleIntersectEnterMonth", "done");
             });
@@ -304,26 +293,24 @@ export default function () {
         handleIntersectLeaveMonth(month_index, year, month, month_index_in_array) {
             this.__debug("handleIntersectLeaveMonth", "start", true);
 
-            this.$nextTick(() => {
-                if (!this.calendar_data.is_scrolled || !this.calendar_data.is_initialized) return;
-                if (this.calendar_data.calendar_months[month_index_in_array].is_shown) return;
+            if (!this.calendar_data.is_initialized) return;
+            if (this.calendar_data.calendar_months[month_index_in_array].is_shown) return;
 
-                console.log(month_index, month_index_in_array);
-                console.log(JSON.parse(JSON.stringify(this.calendar_data.calendar_months)));
+            console.log(month_index, month_index_in_array);
+            console.log(JSON.parse(JSON.stringify(this.calendar_data.calendar_months)));
 
-                if (this.calendar_data.calendar_months[month_index_in_array - 1] && !this.calendar_data.calendar_months[month_index_in_array - 1]?.is_shown) {
-                    this.calendar_data.calendar_months.splice(month_index_in_array - 1, 1);
-                }
-                if (this.calendar_data.calendar_months[month_index_in_array + 1] && !this.calendar_data.calendar_months[month_index_in_array + 1].is_shown) {
-                    this.calendar_data.calendar_months.splice(month_index_in_array + 1, 1);
-                }
+            if (this.calendar_data.calendar_months[month_index_in_array - 1] && !this.calendar_data.calendar_months[month_index_in_array - 1]?.is_shown) {
+                this.calendar_data.calendar_months.splice(month_index_in_array - 1, 1);
+            }
+            if (this.calendar_data.calendar_months[month_index_in_array + 1] && !this.calendar_data.calendar_months[month_index_in_array + 1].is_shown) {
+                this.calendar_data.calendar_months.splice(month_index_in_array + 1, 1);
+            }
 
-                console.log(JSON.parse(JSON.stringify(this.calendar_data.calendar_months)));
+            console.log(JSON.parse(JSON.stringify(this.calendar_data.calendar_months)));
 
-                this.calendar_data.calendar_months[month_index_in_array].is_shown = false;
+            this.calendar_data.calendar_months[month_index_in_array].is_shown = false;
 
-                this.__debug("handleIntersectLeaveMonth", "done", true);
-            });
+            this.__debug("handleIntersectLeaveMonth", "done", true);
 
             // const { year: prev_year, month: prev_month } = this._adjustMonth({ year, month, offset: -1 });
             // const { year: next_year, month: next_month } = this._adjustMonth({ year, month, offset: +1 });
@@ -588,14 +575,14 @@ export default function () {
          * @returns {Promise<boolean>} Успешность восстановления позиции
          */
         _scrollToSavedScrollPos() {
-            if (this.calendar_data._scroll_data.saved_month_index === undefined || this.calendar_data._scroll_data.saved_month_offset === undefined) return false;
+            if (this.calendar_data._scroll_data.saved_month_index === undefined || this.calendar_data._scroll_data.saved_calendar_scroll_top === undefined) return false;
 
             const saved_month = document.getElementById(this.calendar_data._scroll_data.saved_month_index);
 
             if (!saved_month) return false;
 
             const calendar = this.$refs.calendar;
-            const new_top_scroll_pos = Math.round(saved_month.getBoundingClientRect().top + this.calendar_data._scroll_data.saved_month_offset);
+            const new_top_scroll_pos = saved_month.offsetTop + this.calendar_data._scroll_data.saved_calendar_scroll_top;
 
             return new Promise((resolve, reject) => {
                 calendar.scrollTo({
@@ -614,7 +601,7 @@ export default function () {
                         resolve(true);
                         this.calendar_data._scroll_data = {
                             saved_month_index: undefined,
-                            saved_month_offset: undefined,
+                            saved_calendar_scroll_top: undefined,
                         };
                     }
                 };
@@ -624,7 +611,7 @@ export default function () {
                     resolve(true);
                     this.calendar_data._scroll_data = {
                         saved_month_index: undefined,
-                        saved_month_offset: undefined,
+                        saved_calendar_scroll_top: undefined,
                     };
                 } else {
                     calendar.addEventListener("scroll", scrollHandler);
@@ -646,20 +633,8 @@ export default function () {
 
             if (!month_element) return;
 
-            const month_element_rect = month_element.getBoundingClientRect();
-
             this.calendar_data._scroll_data.saved_month_index = month_index;
-            this.calendar_data._scroll_data.saved_month_offset = calendar.scrollTop - month_element_rect.top;
-        },
-        /**
-         * Задает в качестве выбранного месяца переданный месяц
-         * @param {number} year - Год
-         * @param {number} month - Месяц
-         */
-        _selectMonth(year, month) {
-            this.calendar_data.selected_year = year;
-            this.calendar_data.selected_month = month;
-            this.calendar_data.selected_month_name = MONTH_NAMES[month];
+            this.calendar_data._scroll_data.saved_calendar_scroll_top = calendar.scrollTop - month_element.offsetTop;
         },
 
         // debug

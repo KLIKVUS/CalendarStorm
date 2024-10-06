@@ -12,7 +12,6 @@
 
 @section('content')
     <div x-data="generalCalendar"
-        x-init="[initMonths()]"
         x-cloak>
         <div class="dark:bg-gray-800 overflow-hidden rounded-lg bg-gray-50 shadow">
             <div class="mb-3 mt-2 flex items-center justify-between pl-3">
@@ -66,7 +65,7 @@
                             <div class="dark:divide-gray-900 divide-y-2"
                                 :id="month_data.index"
                                 x-intersect:enter.threshold.50="handleIntersectEnterMonth(month_data.index, month_data.year, month_data.month, month_index_in_array)"
-                                x-intersect:leave.full="handleIntersectLeaveMonth(month_data.index, month_data.year, month_data.month, month_index_in_array)">
+                                x-intersect:leave="handleIntersectLeaveMonth(month_data.index, month_data.year, month_data.month, month_index_in_array)">
                                 <template x-for="week_data in month_data.weeks"
                                     :key="week_data.index"
                                     hidden>
