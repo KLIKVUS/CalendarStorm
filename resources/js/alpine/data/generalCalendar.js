@@ -199,7 +199,7 @@ export default function () {
             this.initSelectedMonth();
 
             this.$nextTick(() => {
-                this._scrollToMonth(`${year}-${month}--month-index`);
+                this._scrollToMonth(`${today.getFullYear()}-${today.getMonth()}--month-index`);
             });
         },
         /**
