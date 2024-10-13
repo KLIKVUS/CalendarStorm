@@ -1,10 +1,21 @@
 /**
+ * Данные для инициализации месяца
+ *
+ * @typedef {Object} MonthInitialData
+ * @property {number} weeks_count - Кол-во недель в месяце
+ * @property {MonthData[]} months_data
+ * @property {Date} start_date - Дата, с которой начинается месяц
+ * @property {Date} end_date - Дата, на которой заканчивается месяц
+ */
+/**
  * Данные инициализированного месяца
  *
  * @typedef {Object} InitializedMonthData
  * @property {string} index - Индекс месяца. Должен быть уникальным и состоит из года этого месяца, месяца (пример: "2024-8--month-index")
  * @property {number} year - Год, к которому относиться месяц
  * @property {number} month - Месяц, к которому относиться месяц
+ * @property {Date} start_date - Дата начала месяца
+ * @property {Date} end_date - Дата окончания месяца
  * @property {WeekData[]} weeks - Недели месяца
  * @property {boolean} [is_shown=false] - Находится ли месяц в области видимости пользователя
  */
@@ -18,15 +29,6 @@
  * @property {number} end_day - День, на котором заканчивается месяц
  */
 /**
- * Данные для инициализации месяца
- *
- * @typedef {Object} MonthInitialData
- * @property {number} weeks_count - Кол-во недель в месяце
- * @property {MonthData[]} months_data
- * @property {Date} adjusted_start_date - Дата с которой начинается месяц
- * @property {Date} adjusted_end_date - Дата на которой заканчивается месяц
- */
-/**
  * Данные о неделе
  *
  * @typedef {Object} WeekData
@@ -37,7 +39,7 @@
  * Данные дня
  *
  * @typedef {Object} DayData
- * @property {string} day_index - Индекс дня. Должен быть уникальным и состоит из года этого дня, месяца этого дня и этого дня (пример: "2024-8-30--day-index")
+ * @property {string} index - Индекс дня. Должен быть уникальным и состоит из года этого дня, месяца этого дня и этого дня (пример: "2024-8-30--day-index")
  * @property {Date} date - Дата
  * @property {number} year - Год
  * @property {number} month - Месяц
@@ -52,6 +54,12 @@
  * @property {number} month - Месяц
  * @property {Date | null} [calendar_start_date=null] - Дата начала календаря
  * @property {Date | null} [calendar_end_date=null] - Дата конца календаря
+ */
+/**
+ * Параметры функции добавления месяца
+ *
+ * @typedef {Object} RemoveMonthParams
+ * @property {string} month_index - Индекс месяца, который подлежит удалению
  */
 
 /**
@@ -122,8 +130,6 @@ export default function () {
          * Инициализация выбранного месяца
          */
         initSelectedMonth() {
-            this.__debug("initSelectedMonth", "start");
-
             this._addMonth({
                 add_type: "init",
                 year: this.calendar_data.selected_year,
@@ -131,8 +137,6 @@ export default function () {
             });
 
             this.calendar_data.is_initialized = true;
-
-            this.__debug("initSelectedMonth", "done");
         },
 
         /**
@@ -189,9 +193,14 @@ export default function () {
         switchToCurrentMonth() {
             let today = new Date();
 
-            this.selectMonth(today.getFullYear(), today.getMonth());
+            this.calendar_data.is_initialized = false;
 
-            this.initWeeksData();
+            this.selectMonth(today.getFullYear(), today.getMonth());
+            this.initSelectedMonth();
+
+            this.$nextTick(() => {
+                this._scrollToMonth(`${year}-${month}--month-index`);
+            });
         },
         /**
          * Переключение на предыдущий месяц
@@ -199,9 +208,14 @@ export default function () {
         switchToPreviousMonth() {
             let { year, month } = this._adjustMonth({ offset: -1 });
 
-            this.selectMonth(year, month);
+            this.calendar_data.is_initialized = false;
 
-            this.initWeeksData();
+            this.selectMonth(year, month);
+            this.initSelectedMonth();
+
+            this.$nextTick(() => {
+                this._scrollToMonth(`${year}-${month}--month-index`);
+            });
         },
         /**
          * Переключение на следующий месяц
@@ -209,9 +223,14 @@ export default function () {
         switchToNextMonth() {
             let { year, month } = this._adjustMonth({ offset: 1 });
 
-            this.selectMonth(year, month);
+            this.calendar_data.is_initialized = false;
 
-            this.initWeeksData();
+            this.selectMonth(year, month);
+            this.initSelectedMonth();
+
+            this.$nextTick(() => {
+                this._scrollToMonth(`${year}-${month}--month-index`);
+            });
         },
 
         // Обработчики
@@ -219,118 +238,101 @@ export default function () {
          * Обработчик пересекаемого входа месяца в область видимости
          * Должен вызываться когда пересекаемый месяц попадает в область видимости.
          * Отвечает за переключение выбранного месяца и инициализацию новых месяцев.
-         * @param {string} week_index - Индекс месяца
-         * @param {number} year - Год
-         * @param {number} month - Месяц
+         *
+         * @param {InitializedMonthData} month_data - Данные месяца, на котором вызывается эта функция (прокси-объект)
          * @returns
          */
-        handleIntersectEnterMonth(month_index, year, month, month_index_in_array) {
-            this.__debug("handleIntersectEnterMonth", "start");
-
+        handleIntersectEnterMonth(month_data, month_index_in_array) {
             if (!this.calendar_data.is_initialized) return;
-            if (!this.isSelectedMonth(year, month)) this.selectMonth(year, month);
+            if (!this.isSelectedMonth(month_data.year, month_data.month)) this.selectMonth(month_data.year, month_data.month);
 
-            this.calendar_data.calendar_months[month_index_in_array].is_shown = true;
+            const add_month_params = [];
 
-            const first_month_in_calendar_months = this.calendar_data.calendar_months[0];
-            const last_month_in_calendar_months = this.calendar_data.calendar_months[this.calendar_data.calendar_months.length - 1];
-
-            let add_month_params = [];
-
-            if (month_index == first_month_in_calendar_months.index) {
-                let { year: calendar_year, month: calendar_month } = this._adjustMonth({ year, month, offset: -1 });
-                let calendar_end_date = new Date(this.calendar_data.start_date.getTime());
+            if (month_index_in_array == 0) {
+                let { year, month } = this._adjustMonth({ year: month_data.year, month: month_data.month, offset: -1 });
+                let calendar_end_date = new Date(this.calendar_data.start_date);
                 calendar_end_date.setDate(calendar_end_date.getDate() - 1);
 
                 /** @type {AddMonthParams} */
                 let add_month_param = {
                     add_type: "unshift",
-                    year: calendar_year,
-                    month: calendar_month,
+                    year,
+                    month,
                     calendar_end_date,
                 };
 
                 add_month_params.push(add_month_param);
             }
-            if (month_index == last_month_in_calendar_months.index) {
-                let { year: calendar_year, month: calendar_month } = this._adjustMonth({ year, month, offset: 1 });
-                let calendar_start_date = new Date(this.calendar_data.end_date.getTime());
+            if (month_index_in_array == this.calendar_data.calendar_months.length - 1) {
+                let { year, month } = this._adjustMonth({ year: month_data.year, month: month_data.month, offset: 1 });
+                let calendar_start_date = new Date(this.calendar_data.end_date);
                 calendar_start_date.setDate(calendar_start_date.getDate() + 1);
 
                 /** @type {AddMonthParams} */
                 let add_month_param = {
                     add_type: "push",
-                    year: calendar_year,
-                    month: calendar_month,
+                    year,
+                    month,
                     calendar_start_date,
                 };
 
                 add_month_params.push(add_month_param);
             }
+            if (add_month_params.length == 0) return;
 
-            if (add_month_params.length === 0) return;
+            month_data.is_shown = true;
 
             this.calendar_data.is_scrolled = false;
 
             this.$nextTick(async () => {
-                this._saveScrollPos(month_index);
+                this._saveScrollPos(month_data.index);
                 add_month_params.forEach((add_month_param) => this._addMonth(add_month_param));
             }).then(async () => {
                 this.calendar_data.is_scrolled = await this._scrollToSavedScrollPos();
-
-                this.__debug("handleIntersectEnterMonth", "done");
             });
         },
         /**
          * Обработчик пересекаемого выхода месяца из области видимости
          * Должен вызываться когда пересекаемый день выходит из области видимости.
          * Отвечает за удаление месяцев, которые больше не просматривается пользователем.
-         * @param {string} month_index - Индекс месяца
-         * @param {number} year - Год
-         * @param {number} month - Месяц
+         *
+         * @param {InitializedMonthData} month_data - Данные месяца, на котором вызывается эта функция (прокси-объект)
          * @returns
          */
-        handleIntersectLeaveMonth(month_index, year, month, month_index_in_array) {
-            this.__debug("handleIntersectLeaveMonth", "start", true);
-
+        handleIntersectLeaveMonth(month_data, month_index_in_array) {
             if (!this.calendar_data.is_initialized) return;
-            if (this.calendar_data.calendar_months[month_index_in_array].is_shown) return;
 
-            console.log(month_index, month_index_in_array);
-            console.log(JSON.parse(JSON.stringify(this.calendar_data.calendar_months)));
+            const prev_month = this.calendar_data.calendar_months[month_index_in_array - 1];
+            const next_month = this.calendar_data.calendar_months[month_index_in_array + 1];
+            const excluded_month_indexes = [];
+            let new_calendar_start_date, new_calendar_end_date;
 
-            if (this.calendar_data.calendar_months[month_index_in_array - 1] && !this.calendar_data.calendar_months[month_index_in_array - 1]?.is_shown) {
-                this.calendar_data.calendar_months.splice(month_index_in_array - 1, 1);
+            if (prev_month && !prev_month.is_shown) {
+                excluded_month_indexes.push(prev_month.index);
+                new_calendar_start_date = new Date(month_data.start_date);
             }
-            if (this.calendar_data.calendar_months[month_index_in_array + 1] && !this.calendar_data.calendar_months[month_index_in_array + 1].is_shown) {
-                this.calendar_data.calendar_months.splice(month_index_in_array + 1, 1);
+            if (next_month && !next_month.is_shown) {
+                excluded_month_indexes.push(next_month.index);
+                new_calendar_end_date = new Date(month_data.end_date);
             }
+            if (excluded_month_indexes.length == 0) return;
 
-            console.log(JSON.parse(JSON.stringify(this.calendar_data.calendar_months)));
+            month_data.is_shown = false;
 
-            this.calendar_data.calendar_months[month_index_in_array].is_shown = false;
-
-            this.__debug("handleIntersectLeaveMonth", "done", true);
-
-            // const { year: prev_year, month: prev_month } = this._adjustMonth({ year, month, offset: -1 });
-            // const { year: next_year, month: next_month } = this._adjustMonth({ year, month, offset: +1 });
-
-            // const prev_month_index = `${prev_year}-${prev_month}--month-index`;
-            // const next_month_index = `${next_year}-${next_month}--month-index`;
-            // const excluded_month_indexes = [prev_month_index, next_month_index];
-
-            // const awd = this.calendar_data.calendar_months.filter((calendar_month) => !excluded_month_indexes.includes(calendar_month.index));
+            this._changeCalendarStartAndEndDate({ new_start_date: new_calendar_start_date, new_end_date: new_calendar_end_date });
+            this.calendar_data.calendar_months = this.calendar_data.calendar_months.filter((calendar_month) => !excluded_month_indexes.includes(calendar_month.index));
         },
 
         // Приватные функции
         /**
-         * Добавление месяцев и изменение дат календаря
+         * Добавление месяца
          *
          * @param {AddMonthParams} params - Объект с параметрами для добавления месяца
          */
         _addMonth({ add_type, year, month, calendar_start_date = null, calendar_end_date = null }) {
-            if (add_type !== "push" && add_type !== "unshift" && add_type !== "init") {
-                throw new Error("Invalid add_type. It should be 'push' or 'unshift' or 'init'.");
+            const valid_add_types = ["push", "unshift", "init"];
+            if (!valid_add_types.includes(add_type)) {
+                throw new Error("Недопустимый 'add_type'. Это должно быть 'push', 'unshift' или 'init'.");
             }
 
             const curr_month_initial_data = this._getMonthInitialData({
@@ -339,54 +341,31 @@ export default function () {
                 start_date: calendar_start_date,
                 end_date: calendar_end_date,
             });
-            const curr_month_weeks = this._getMonthWeeks({
+            const curr_month_weeks = this._getMonthWeeksData({
                 weeks_count: curr_month_initial_data.weeks_count,
                 months_data: curr_month_initial_data.months_data,
             });
-            const curr_month_data = this._getMonthData({ year, month, weeks: curr_month_weeks });
+            const curr_month_data = this._getMonthData({ year, month, weeks: curr_month_weeks, start_date: curr_month_initial_data.start_date, end_date: curr_month_initial_data.end_date });
 
             let calendar_months = this.calendar_data.calendar_months;
             switch (add_type) {
                 case "unshift":
-                    this.calendar_data.start_date = curr_month_initial_data.adjusted_start_date;
+                    this._changeCalendarStartAndEndDate({ new_start_date: curr_month_initial_data.start_date });
                     calendar_months.unshift(curr_month_data);
                     break;
 
                 case "push":
-                    this.calendar_data.end_date = curr_month_initial_data.adjusted_end_date;
+                    this._changeCalendarStartAndEndDate({ new_end_date: curr_month_initial_data.end_date });
                     calendar_months.push(curr_month_data);
                     break;
 
                 default:
-                    this.calendar_data.start_date = curr_month_initial_data.adjusted_start_date;
-                    this.calendar_data.end_date = curr_month_initial_data.adjusted_end_date;
+                    this._changeCalendarStartAndEndDate({ new_start_date: curr_month_initial_data.start_date, new_end_date: curr_month_initial_data.end_date });
                     this.calendar_data.calendar_months = [curr_month_data];
                     break;
             }
         },
-        /**
-         * Получение данных месяца
-         *
-         * @private
-         *
-         * @param {Object} params
-         * @param {number} params.year - Год
-         * @param {number} params.month - Месяц
-         * @param {WeekData[]} params.weeks - Недели месяца
-         * @returns {InitializedMonthData}
-         */
-        _getMonthData({ year, month, weeks }) {
-            /** @type {InitializedMonthData} */
-            const month_data = {
-                index: `${year}-${month}--month-index`,
-                year,
-                month,
-                weeks,
-                is_shown: false,
-            };
 
-            return month_data;
-        },
         /**
          * Получение данных о месяце для рендеринга
          *
@@ -403,61 +382,81 @@ export default function () {
             let days_in_prev_month = new Date(year, month, 0).getDate();
             let days_in_this_month = new Date(year, month + 1, 0).getDate();
 
-            let first_day_of_month = new Date(year, month, 1).getDay();
-            let last_day_of_month = new Date(year, month + 1, 0).getDay();
+            let first_day_of_this_month = new Date(year, month, 1).getDay();
+            let last_day_of_this_month = new Date(year, month + 1, 0).getDay();
 
-            let days_before_first_monday = first_day_of_month === 0 ? 6 : first_day_of_month - 1;
-            let days_after_last_sunday = last_day_of_month === 0 ? 0 : 7 - last_day_of_month;
+            let days_before_first_monday = first_day_of_this_month === 0 ? 6 : first_day_of_this_month - 1;
+            let days_after_last_sunday = last_day_of_this_month === 0 ? 0 : 7 - last_day_of_this_month;
 
-            let adjusted_start_day = start_date ? start_date.getDate() : 1;
-            let adjusted_end_day = end_date ? end_date.getDate() : days_in_this_month;
-
-            let total_days = adjusted_end_day - adjusted_start_day + 1 + days_before_first_monday + days_after_last_sunday;
-
-            let weeks_count = Math.ceil(total_days / 7);
-
-            /** @type {MonthData} */
-            let prev_month_data = {
-                ...this._adjustMonth({ year, month, offset: -1 }),
-                start_day: days_in_prev_month - days_before_first_monday + 1,
-                end_day: days_in_prev_month,
-            };
-            /** @type {MonthData} */
-            let this_month_data = {
-                ...this._adjustMonth({ year, month }),
-                start_day: adjusted_start_day,
-                end_day: adjusted_end_day,
-            };
-            /** @type {MonthData} */
-            let next_month_data = {
-                ...this._adjustMonth({ year, month, offset: 1 }),
-                start_day: 1,
-                end_day: days_after_last_sunday,
-            };
-            const months_data = [this_month_data];
-
-            if (days_before_first_monday > 0 && (!start_date || adjusted_start_day === 1)) months_data.unshift(prev_month_data);
-            if (days_after_last_sunday > 0 && (!end_date || adjusted_end_day === days_in_this_month)) months_data.push(next_month_data);
-
-            let adjusted_start_date = new Date(year, month, adjusted_start_day);
-            if (!start_date && days_before_first_monday > 0) {
-                adjusted_start_date = new Date(year, month - 1, days_in_prev_month - days_before_first_monday + 1);
+            if (!start_date) {
+                let { year: adjust_year, month: adjust_month } = this._adjustMonth({ year, month, offset: days_before_first_monday > 0 ? -1 : 0 });
+                start_date = new Date(adjust_year, adjust_month, days_before_first_monday > 0 ? days_in_prev_month - days_before_first_monday + 1 : 1);
+            }
+            if (!end_date) {
+                let { year: adjust_year, month: adjust_month } = this._adjustMonth({ year, month, offset: days_after_last_sunday > 0 ? 1 : 0 });
+                end_date = new Date(adjust_year, adjust_month, days_after_last_sunday > 0 ? days_after_last_sunday : days_in_this_month);
             }
 
-            let adjusted_end_date = new Date(year, month, adjusted_end_day);
-            if (!end_date && days_after_last_sunday > 0) {
-                adjusted_end_date = new Date(year, month + 1, days_after_last_sunday);
+            let total_days = Math.abs(start_date - end_date) / (24 * 60 * 60 * 1000) + 1;
+            let weeks_count = Math.ceil(total_days / 7);
+
+            let current_date = new Date(start_date);
+            const months_data = [];
+
+            while (current_date <= end_date) {
+                const year = current_date.getFullYear();
+                const month = current_date.getMonth();
+                const start_day = current_date.getDate();
+                const end_of_month = new Date(year, month + 1, 0).getDate();
+                const end_day = year === end_date.getFullYear() && month === end_date.getMonth() ? end_date.getDate() : end_of_month;
+
+                months_data.push({
+                    year,
+                    month,
+                    start_day,
+                    end_day,
+                });
+
+                current_date.setDate(1);
+                current_date.setMonth(current_date.getMonth() + 1);
             }
 
             /** @type {MonthInitialData} */
             const month_initial_data = {
                 weeks_count,
                 months_data,
-                adjusted_start_date,
-                adjusted_end_date,
+                start_date,
+                end_date,
             };
 
             return month_initial_data;
+        },
+        /**
+         * Получение данных месяца
+         *
+         * @private
+         *
+         * @param {Object} params
+         * @param {number} params.year - Год
+         * @param {number} params.month - Месяц
+         * @param {WeekData[]} params.weeks - Недели месяца
+         * @param {Date} params.start_date - Дата, с которой начинается месяц
+         * @param {Date} params.end_date - Дата, на которой заканчивается месяц
+         * @returns {InitializedMonthData}
+         */
+        _getMonthData({ year, month, weeks, start_date, end_date }) {
+            /** @type {InitializedMonthData} */
+            const month_data = {
+                index: `${year}-${month}--month-index`,
+                year,
+                month,
+                start_date,
+                end_date,
+                weeks,
+                is_shown: false,
+            };
+
+            return month_data;
         },
         /**
          * Получение данных о неделях в календарь
@@ -469,7 +468,7 @@ export default function () {
          * @param {MonthData[]} params.months_data - Данные о месяцах
          * @returns {WeekData[]}
          */
-        _getMonthWeeks({ weeks_count, months_data }) {
+        _getMonthWeeksData({ weeks_count, months_data }) {
             let weeks = [];
             let week_index = 0;
 
@@ -527,7 +526,7 @@ export default function () {
         _getDayData(year, month, day) {
             /** @type {DayData} */
             const dayData = {
-                day_index: `${year}-${month}-${day}--day-index`,
+                index: `${year}-${month}-${day}--day-index`,
                 date: new Date(year, month, day),
                 year,
                 month,
@@ -536,6 +535,7 @@ export default function () {
 
             return dayData;
         },
+
         /**
          * Корректировка года и месяца
          *
@@ -545,7 +545,7 @@ export default function () {
          * @param {number} [params.year=this.calendar_data.selected_year] - Год
          * @param {number} [params.month=this.calendar_data.selected_month] - Месяц
          * @param {number} [params.offset=0] - Смещение месяца
-         * @returns {Object} Скорректированные год и месяц
+         * @returns {{ year: number, month: number }} Скорректированные год и месяц
          */
         _adjustMonth({ year = this.calendar_data.selected_year, month = this.calendar_data.selected_month, offset = 0 }) {
             let date = new Date(year, month, 1);
@@ -553,20 +553,7 @@ export default function () {
 
             return { year: date.getFullYear(), month: date.getMonth() };
         },
-        /**
-         * Получение среднего дня месяца
-         *
-         * @private
-         *
-         * @param {number} year - Год
-         * @param {number} month - Месяц
-         * @returns {number} Средний день месяца
-         */
-        _getMiddleDayOfMonth(year, month) {
-            const last_day_of_month = new Date(year, month + 1, 0).getDate();
 
-            return Math.ceil(last_day_of_month / 2);
-        },
         /**
          * Прокрутка к сохраненной позиции скролла
          *
@@ -575,14 +562,21 @@ export default function () {
          * @returns {Promise<boolean>} Успешность восстановления позиции
          */
         _scrollToSavedScrollPos() {
-            if (this.calendar_data._scroll_data.saved_month_index === undefined || this.calendar_data._scroll_data.saved_calendar_scroll_top === undefined) return false;
+            if (this.calendar_data._scroll_data.saved_month_index === undefined || this.calendar_data._scroll_data.saved_calendar_scroll_top === undefined) {
+                throw new Error(
+                    "Функция '_scrollToSavedScrollPos' не может быть выполнена из-за отсутствия 'saved_month_index' и 'saved_calendar_scroll_top'. Возможно, что функция '_saveScrollPos' не была вызвана до вызова функции '_scrollToSavedScrollPos'."
+                );
+            }
 
             const saved_month = document.getElementById(this.calendar_data._scroll_data.saved_month_index);
 
-            if (!saved_month) return false;
+            if (!saved_month) {
+                throw new Error("Функция '_scrollToSavedScrollPos' не может быть выполнена из-за отсутствия 'saved_month_index' в DOM дереве.");
+            }
 
             const calendar = this.$refs.calendar;
             const new_top_scroll_pos = saved_month.offsetTop + this.calendar_data._scroll_data.saved_calendar_scroll_top;
+            const error_of_the_scroll_position = 5;
 
             return new Promise((resolve, reject) => {
                 calendar.scrollTo({
@@ -595,7 +589,7 @@ export default function () {
                     reject(false);
                 }, 2000);
                 const scrollHandler = () => {
-                    if (calendar.scrollTop === new_top_scroll_pos) {
+                    if (Math.abs(calendar.scrollTop - new_top_scroll_pos) <= error_of_the_scroll_position) {
                         calendar.removeEventListener("scroll", scrollHandler);
                         clearTimeout(failed);
                         resolve(true);
@@ -621,9 +615,10 @@ export default function () {
         /**
          * Сохранение текущей позиции скролла
          *
-         * @param {string=} month_index - Индекс месяца. Позволяет сохранить позицию скрола относительно месяца, что позволяет добиться большей точности.
-         * Найдет месяц, если в момент вызова функции он находиться в DOM дереве.
          * @private
+         *
+         * @param {string} month_index - Индекс месяца. Позволяет сохранить позицию скрола относительно месяца, что позволяет добиться большей точности.
+         * Найдет месяц, если в момент вызова функции он находиться в DOM дереве.
          */
         _saveScrollPos(month_index) {
             let calendar = this.$refs.calendar;
@@ -636,10 +631,36 @@ export default function () {
             this.calendar_data._scroll_data.saved_month_index = month_index;
             this.calendar_data._scroll_data.saved_calendar_scroll_top = calendar.scrollTop - month_element.offsetTop;
         },
+        /**
+         * Прокрутка скрола к месяцу
+         *
+         * @private
+         *
+         * @param {string} month_index - Индекс месяца. Позволяет прокрутить скрол к месяцу.
+         */
+        _scrollToMonth(month_index) {
+            if (!month_index) return;
+            const month_element = document.getElementById(month_index);
 
-        // debug
-        __debug(func_name, text, highlight = false) {
-            console.info(`%c ${func_name} `, "color:white; margin: 1rem 0 0 0;" + (highlight ? "background-color:red;" : "background-color:blue;"), "\n", text);
+            if (!month_element) return;
+
+            month_element.scrollIntoView({
+                behavior: "instant",
+            });
+        },
+
+        /**
+         * Изменение начальной и конечной даты календаря
+         *
+         * @private
+         *
+         * @param {Object} params
+         * @param {Date} [params.new_start_date] - Новая дата начала календаря
+         * @param {Date} [params.new_end_date] - Новая дата окончания календаря
+         */
+        _changeCalendarStartAndEndDate({ new_start_date, new_end_date }) {
+            this.calendar_data.start_date = new_start_date || this.calendar_data.start_date;
+            this.calendar_data.end_date = new_end_date || this.calendar_data.end_date;
         },
     };
 }

@@ -64,14 +64,14 @@
                             hidden>
                             <div class="dark:divide-gray-900 divide-y-2"
                                 :id="month_data.index"
-                                x-intersect:enter.threshold.50="handleIntersectEnterMonth(month_data.index, month_data.year, month_data.month, month_index_in_array)"
-                                x-intersect:leave="handleIntersectLeaveMonth(month_data.index, month_data.year, month_data.month, month_index_in_array)">
+                                x-intersect:enter.threshold.50="handleIntersectEnterMonth(month_data, month_index_in_array)"
+                                x-intersect:leave="handleIntersectLeaveMonth(month_data, month_index_in_array)">
                                 <template x-for="week_data in month_data.weeks"
                                     :key="week_data.index"
                                     hidden>
                                     <div class="dark:divide-gray-900 flex divide-x-2">
-                                        <template x-for="(day_data, day_index) in week_data.days"
-                                            :key="day_data.day_index"
+                                        <template x-for="day_data in week_data.days"
+                                            :key="day_data.index"
                                             hidden>
                                             <div class="min-h-40 relative flex-1 overflow-auto px-4 pt-2">
                                                 <div class="inline-flex h-6 w-9 cursor-pointer items-center justify-center rounded-full text-center leading-none transition duration-100 ease-in-out"
@@ -107,7 +107,7 @@
                     </div>
                 </div>
 
-                {{-- <div class="absolute bottom-0 left-0 right-0 top-0 z-[1]"
+                <div class="absolute bottom-0 left-0 right-0 top-0 z-[1]"
                     x-show="!calendar_data.is_initialized || !calendar_data.is_scrolled"
                     x-transition:enter="transition ease-out duration-300 delay-0"
                     x-transition:enter-start="opacity-50"
@@ -123,7 +123,7 @@
                             <span class="sr-only">Loading...</span>
                         </x-tabler-icon>
                     </div>
-                </div> --}}
+                </div>
             </div>
         </div>
 
