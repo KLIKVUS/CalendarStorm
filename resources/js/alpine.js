@@ -5,6 +5,7 @@ import intersect from '@alpinejs/intersect';
 
 import localUserSettings from "./alpine/data/localUserSettings";
 import generalCalendar from "./alpine/data/generalCalendar";
+import dragScroll from "./alpine/data/dragScroll";
 
 window.Alpine = Alpine;
 
@@ -16,5 +17,7 @@ Alpine.plugin(intersect);
 Alpine.data("localUserSettings", localUserSettings);
 // Функции основного календаря
 Alpine.data("generalCalendar", generalCalendar);
+// Функции для скрола при помощи драга
+Alpine.data("dragScroll", dragScroll);
 
 Alpine.start();
