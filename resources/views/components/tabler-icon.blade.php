@@ -1,8 +1,8 @@
 @props([
-    'size' => 'base',
-    'svg',
+    "size" => "base",
+    "svg",
 ])
 
-<i {{ $attributes->merge(['class' => "ti ti-$svg text-$size"]) }}>
+<i {{ $attributes->merge(["class" => "ti ti-$svg text-$size"]) }}>
     {{ $slot }}
 </i>

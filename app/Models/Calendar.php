@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Calendar extends Model
@@ -69,8 +69,9 @@ class Calendar extends Model
         return $this->belongsToMany(Event::class)->when(
             auth()->user(),
             function (Builder $query, User $user) {
-                if ($this->owner_id != $user->id)
+                if ($this->owner_id != $user->id) {
                     $query->where('active', true);
+                }
             },
             function (Builder $query) {
                 $query->where('active', true);

@@ -191,6 +191,7 @@
     "This action is unauthorized.": "This action is unauthorized.",
     "This password reset link will expire in :count minutes.": "This password reset link will expire in :count minutes.",
     "to": "to",
+    "Today": "Today",
     "Toggle navigation": "Toggle navigation",
     "Too Early": "Too Early",
     "Too Many Requests": "Too Many Requests",
@@ -218,8 +219,6 @@
     "Whoops!": "Whoops!",
     "Yes": "Yes",
     "You are receiving this email because we received a password reset request for your account.": "You are receiving this email because we received a password reset request for your account.",
-
     "You do not have the rights to interact with the calendar.": "You do not have the rights to interact with the calendar.",
-    "You do not have the rights to interact with the event.": "You do not have the rights to interact with the event.",
-    "Today": "Today"
+    "You do not have the rights to interact with the event.": "You do not have the rights to interact with the event."
 }

@@ -191,6 +191,7 @@
     "This action is unauthorized.": "Действие не авторизовано.",
     "This password reset link will expire in :count minutes.": "Срок действия ссылки для сброса пароля истекает через :count минут.",
     "to": "по",
+    "Today": "Сегодня",
     "Toggle navigation": "Переключить навигацию",
     "Too Early": "Слишком рано",
     "Too Many Requests": "Слишком много запросов",
@@ -218,8 +219,6 @@
     "Whoops!": "Упс!",
     "Yes": "Да",
     "You are receiving this email because we received a password reset request for your account.": "Вы получили это письмо, потому что мы получили запрос на сброс пароля для Вашей учётной записи.",
-
     "You do not have the rights to interact with the calendar.": "У вас нету прав для взаимодействия с календарем.",
-    "You do not have the rights to interact with the event.": "У вас нету прав для взаимодействия с ивентом.",
-    "Today": "Сегодня"
+    "You do not have the rights to interact with the event.": "У вас нету прав для взаимодействия с ивентом."
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Models\User;
 use App\Enums\TokenAbility;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
@@ -26,7 +26,7 @@ class RegisterController extends Controller
         }
 
         $newUser = User::create($validated);
-    
+
         $access_token = $newUser->createToken('access_token', [TokenAbility::ACCESS_API->value])->plainTextToken;
 
         return response()->json([

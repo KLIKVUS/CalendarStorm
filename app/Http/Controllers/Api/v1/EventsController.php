@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Models\Event;
 use App\Events\CalendarEventsUpdate;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\EventResource;
 use App\Http\Requests\Event\UpdateRequest;
+use App\Http\Resources\EventResource;
+use App\Models\Event;
 
 class EventsController extends Controller
 {

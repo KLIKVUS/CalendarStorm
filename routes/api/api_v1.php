@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\v1\EventsController;
 use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\v1\CalendarController;
 use App\Http\Controllers\Api\Auth\RegisterController;
-use App\Http\Controllers\Api\v1\UserCalendarController;
+use App\Http\Controllers\Api\v1\CalendarController;
 use App\Http\Controllers\Api\v1\CalendarEventController;
+use App\Http\Controllers\Api\v1\EventsController;
+use App\Http\Controllers\Api\v1\UserCalendarController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------

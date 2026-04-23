@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Models\User;
 use App\Enums\TokenAbility;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
@@ -18,15 +18,15 @@ class LoginController extends Controller
         ]);
 
         $user = User::where('login', $request->login)->first();
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => __('auth.failed'),
+                'message' => __('Неверный логин или пароль.'),
             ], 422);
-        } elseif (!Hash::check($request->password, $user->password)) {
+        } elseif (! Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => __('auth.password'),
+                'message' => __('Пароль неверен.'),
             ], 422);
         }
 
