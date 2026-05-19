@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Web\Auth;
 
 use App\Enums\TokenAbility;
 use App\Http\Controllers\Controller;
@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class LoginFormController extends Controller
+class LoginController extends Controller
 {
     /**
      * Обработать вход пользователя по форме.

@@ -1,15 +1,9 @@
-@extends("layouts.base")
+@extends('layouts.base')
 
-@section("page.title", "Календарь")
+@section('page.title', 'Календарь')
 
-@push("head.js")
-    <script>
-        window.translations = @json([
-            "calendar" => __("calendar"),
-        ]);
-    </script>
-@endpush
-
-@section("content")
-    @include("includes.calendar")
+@section('content')
+    <div class="h-[75vh]">
+        @include('includes.calendar')
+    </div>
 @endsection

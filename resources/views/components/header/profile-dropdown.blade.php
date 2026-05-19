@@ -1,10 +1,10 @@
 <div
-    class="inline-flex relative text-start overflow-visible"
+    class="relative inline-flex overflow-visible text-start"
     x-data="{ isUserAvatarOpen: false }"
 >
     <button
+        class="focus:outline-hidden inline-flex shrink-0 items-center gap-x-2 rounded-lg p-0.5 pl-2 pr-1 text-start text-gray-800 hover:bg-slate-100 hover:text-gray-500 md:flex-row-reverse md:pl-1 md:pr-0.5 dark:text-neutral-200 dark:hover:bg-gray-700"
         type="button"
-        class="p-0.5 pr-1 pl-2 md:pr-0.5 md:pl-1 inline-flex shrink-0 items-center gap-x-2 text-start text-gray-800 dark:text-neutral-200 rounded-lg hover:bg-slate-100 dark:hover:bg-gray-700 focus:outline-hidden md:flex-row-reverse"
         @click="isUserAvatarOpen = !isUserAvatarOpen"
     >
         <x-tabler-user-square-rounded class="size-5" />
@@ -13,7 +13,7 @@
 
     <!-- Account Dropdown -->
     <div
-        class="z-[2] absolute left-0 md:right-0 md:left-auto top-full mt-2 w-60 transition-[opacity,margin] duration bg-white dark:bg-gray-700 border border-transparent rounded-xl shadow-xl"
+        class="duration absolute left-0 top-full z-[2] mt-2 w-60 rounded-xl border border-transparent bg-white shadow-xl transition-[opacity,margin] md:left-auto md:right-0 dark:bg-gray-700"
         x-show="isUserAvatarOpen"
         x-transition:enter="transition-opacity duration-300"
         x-transition:enter-start="opacity-0"
@@ -23,32 +23,41 @@
         x-transition:leave-end="opacity-0"
         @click.away="isUserAvatarOpen = false"
     >
-        <div class="py-2 px-3.5">
-            <span class="font-medium text-gray-800 dark:text-neutral-200">
-                {{ __('User') }}:
-            </span>
+        <div class="px-3.5 py-2">
             <p class="text-sm text-gray-500 dark:text-neutral-400">
-                {{ Auth::user()->login }}
+                {{ __('User') }}:
             </p>
+            <span class="font-medium text-gray-800 dark:text-neutral-200">
+                {{ Auth::user()->login }}#{{ Auth::user()->id }}
+            </span>
         </div>
 
         <div class="border-t-2 border-gray-200 dark:border-slate-600">
-            <x-header.link route="home.index">
-                <x-tabler-user class="size-4"/>
+            <x-header.link
+                route="profile.index"
+                :routeParams="['id' => Auth::user()->id]"
+            >
+                <x-tabler-user class="size-4" />
                 {{ __('Профиль') }}
             </x-header.link>
 
             <x-header.link route="home.index">
-                <x-tabler-settings class="size-4"/>
+                <x-tabler-settings class="size-4" />
                 {{ __('Настройки') }}
             </x-header.link>
 
             <div class="border-t-2 border-gray-200 dark:border-slate-600">
-                <form method="POST" action="{{ route('auth.logout') }}">
+                <form
+                    method="POST"
+                    action="{{ route('auth.logout') }}"
+                >
                     @csrf
-                    <button type="submit" class="w-full p-2 text-sm text-red-600">
+                    <button
+                        class="w-full p-2 text-sm text-red-600"
+                        type="submit"
+                    >
                         <span class="flex items-center gap-2">
-                            <x-tabler-logout class="size-4"/>
+                            <x-tabler-logout class="size-4" />
                             {{ __('Выйти') }}
                         </span>
                     </button>
