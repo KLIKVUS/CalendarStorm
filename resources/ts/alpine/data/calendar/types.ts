@@ -14,6 +14,11 @@ export interface CalendarConfig {
     events?: EventData[];
 }
 
+export interface ApiRes {
+    data: any;
+    success: boolean;
+}
+
 export interface CalendarServiceParams extends Partial<MonthYear> {}
 
 export interface ConvertedEventData {

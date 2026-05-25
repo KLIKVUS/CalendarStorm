@@ -1,5 +1,5 @@
 <div
-    class="absolute bottom-0 left-0 right-0 top-0 z-[1] select-none"
+    class="absolute bottom-0 left-0 right-0 top-0 z-[2] select-none"
     x-show="loaderService.isLoading"
     x-transition:enter="transition ease-out duration-500 delay-0"
     x-transition:enter-start="opacity-75"

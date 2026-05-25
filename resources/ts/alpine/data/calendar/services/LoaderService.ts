@@ -7,8 +7,6 @@ class LoaderService {
         isLoading: true as boolean,
         tasks: [] as LoaderTask[],
     });
-    // private _isLoading: boolean = true;
-    // private _tasks: LoaderTask[] = [];
 
     constructor() {
         // this.checkTasks();

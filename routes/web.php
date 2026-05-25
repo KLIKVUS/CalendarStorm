@@ -44,7 +44,7 @@ Route::prefix('/auth')->name('auth.')->group(function () {
 // Главная страница
 Route::view('/', 'pages.home.index')->name('home.index');
 
-// Календарь - главная страница приложения
+// Календарь
 Route::view('/calendar', 'pages.calendar.index')->name('calendar.index');
 
 // Профиль пользователя
