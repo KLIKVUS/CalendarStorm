@@ -1,11 +1,15 @@
 import {
     areIntervalsOverlapping,
+    differenceInCalendarDays,
     differenceInDays,
+    endOfMonth,
+    endOfWeek,
     format,
     getISODay,
     getWeek,
     isSameDay,
     isSameWeek,
+    min,
 } from "date-fns";
 
 import type { ConvertedEventData, EventData } from "../types";
@@ -39,6 +43,25 @@ export default class EventRender {
 
         if (diffToBeginning > 0) length -= diffToBeginning;
         return Math.min(length, maxEventLength);
+    }
+
+    public getTrimmedEventLengthInLastWeekOfMonth(
+        startDate: Date,
+        eventLength: number,
+    ): number {
+        const monthEnd = endOfMonth(startDate);
+        const weekEnd = endOfWeek(startDate, { weekStartsOn: 1 });
+
+        if (weekEnd.getMonth() === startDate.getMonth()) {
+            return eventLength;
+        }
+
+        const eventEnd = new Date(startDate);
+        eventEnd.setDate(startDate.getDate() + eventLength);
+
+        const visibleEnd = min([eventEnd, monthEnd]);
+
+        return differenceInCalendarDays(visibleEnd, startDate);
     }
 
     public InsertDivWithHeight(
@@ -105,17 +128,15 @@ export default class EventRender {
         });
     }
 
-    public IsEventIntersectMonth(event: EventData, year: number, month: number): boolean {
+    public IsEventIntersectMonth(
+        event: EventData,
+        year: number,
+        month: number,
+    ): boolean {
         const evStart = format(new Date(event.beginning), "yyyy-MM-dd");
         const evEnd = format(new Date(event.ending), "yyyy-MM-dd");
-        const monthStart = format(
-            new Date(year, month, 1),
-            "yyyy-MM-dd",
-        );
-        const monthEnd = format(
-            new Date(year, month + 1, 0),
-            "yyyy-MM-dd",
-        );
+        const monthStart = format(new Date(year, month, 1), "yyyy-MM-dd");
+        const monthEnd = format(new Date(year, month + 1, 0), "yyyy-MM-dd");
 
         return areIntervalsOverlapping(
             { start: evStart, end: evEnd },

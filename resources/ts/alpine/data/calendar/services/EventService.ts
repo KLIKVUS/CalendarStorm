@@ -16,19 +16,23 @@ import { api } from "../utils/ApiClient";
 
 export default class EventService {
     public eventRender: EventRender;
+    private receivedEvents: EventData[];
     private _events: ConvertedEventData[] = [];
 
     constructor({ events = [] }: { events?: EventData[] }) {
         this.eventRender = new EventRender();
-
-        this.init(events);
+        this.receivedEvents = events;
     }
 
-    private async init(events: EventData[]): Promise<void> {
+    public async init(): Promise<void> {
         LoaderService.addTask({ name: "LoadingEvents" });
 
-        if (!events.length) {
+        let events: EventData[];
+
+        if (!this.receivedEvents.length) {
             events = await this.FetchFromDatabase();
+        } else {
+            events = this.receivedEvents;
         }
 
         const sortedEvents = this.SortEventsByDate(events, "asc");

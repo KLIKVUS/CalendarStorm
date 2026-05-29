@@ -1,8 +1,8 @@
 <div
     class="grid grid-cols-7 gap-[2px]"
     :id="monthData.id"
-    x-intersect:enter.half="$nextTick(() => calendarService.SelectMonth(monthData.year, monthData.month))"
-    x-intersect:leave.threshold.25="$nextTick(() => calendarService.monthsService.MonthUnShown(monthData.id))"
+    x-intersect:enter.margin.-50%="$nextTick(() => !loaderService.isLoading &&  calendarService.SelectMonth(monthData.year, monthData.month))"
+    x-intersect:leave.margin.30%="$nextTick(() => !loaderService.isLoading && calendarService.monthsService.MonthUnShown(monthData.id))"
 >
     <div
         class="sticky top-0 z-[2] col-span-full h-8 text-center text-lg font-bold"
@@ -23,7 +23,7 @@
 
     <template
         x-for="day in monthData.daysCount"
-        :key="monthData.year+'+'+monthData.month+'+'+day"
+        :key="monthData.id + '-' + day"
         hidden
     >
         <x-calendar.calendar-structure.day
@@ -39,26 +39,34 @@
                 class="px-3 py-2 text-center leading-none transition duration-100 ease-in-out sm:mx-2 sm:mt-2 sm:rounded-lg sm:py-0.5"
                 x-text="day"
                 :class="{
-                    'bg-blue-500 text-white dark:text-white': new Date(monthData.year, monthData.month, day).toDateString() === new Date().toDateString(),
-                    'text-gray-300 dark:text-gray-700': !calendarService.IsSelectedMonth(monthData.year, monthData.month),
-                }">
+                    'bg-blue-500 text-white dark:text-white': new Date(monthData.year, monthData.month, day)
+                        .toDateString() === new Date().toDateString(),
+                    'text-gray-300 dark:text-gray-700': !calendarService.IsSelectedMonth(monthData.year, monthData
+                        .month),
+                }"
+            >
             </div>
 
-            <div
-                class="relative mt-2 space-y-2"
-                x-data="{
-                    dayEvents: new Date(monthData.year, monthData.month, day).getDay() == 1 || day == 1 ?
-                        eventService.GetEventsForDay(monthData.year, monthData.month, day) :
-                        eventService.GetEventsStartingOn(monthData.year, monthData.month, day),
-                    weekIndex: eventService.eventRender.GetDayWeekIndex(monthData.year, monthData.month, day),
-                    initialLevelNumber: 0,
-                    eventLengths: {},
-                }"
-                x-show="dayEvents.length">
-                <template x-for="dayEvent in dayEvents" hidden>
-                    <x-calendar.events.event-for-calendar-day />
-                </template>
-            </div>
+            <template x-if="!loaderService.isLoading">
+                <div
+                    class="relative mt-2 space-y-2"
+                    x-data="{
+                        dayEvents: dayEvents = new Date(monthData.year, monthData.month, day).getDay() == 1 || day == 1 ?
+                            eventService.GetEventsForDay(monthData.year, monthData.month, day) : eventService.GetEventsStartingOn(monthData.year, monthData.month, day),
+                        weekIndex: eventService.eventRender.GetDayWeekIndex(monthData.year, monthData.month, day),
+                        initialLevelNumber: 0,
+                        eventLengths: {},
+                    }"
+                    x-show="dayEvents.length"
+                >
+                    <template
+                        x-for="dayEvent in dayEvents"
+                        hidden
+                    >
+                        <x-calendar.events.event-for-calendar-day />
+                    </template>
+                </div>
+            </template>
 
             <x-calendar.buttons.add-event />
         </x-calendar.calendar-structure.day>

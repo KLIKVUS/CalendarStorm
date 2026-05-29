@@ -22,7 +22,7 @@
         @mouseout.stop="dayEvent.isHovered = false"
         class="absolute left-0 z-[1] overflow-hidden border-2 px-2 py-1 transition-colors bg-[var(--event-color)]"
         :style="{
-            right: new Date(monthData.year, monthData.month + 1, 0).getDate() === day ? 0 : `calc(-${eventLengths[dayEvent.data.id] * 100}% - ${(eventLengths[dayEvent.data.id]) * 2}px)`,
+            right: `calc(-${eventService.eventRender.getTrimmedEventLengthInLastWeekOfMonth(new Date(monthData.year, monthData.month, day), eventLengths[dayEvent.data.id]) * 100}% - ${eventService.eventRender.getTrimmedEventLengthInLastWeekOfMonth(new Date(monthData.year, monthData.month, day), eventLengths[dayEvent.data.id]) * 2}px)`,
             '--event-color': dayEvent.data.color,
             filter: eventService.eventRender.IsEventIntersectMonth(dayEvent.data, calendarService.data.selectedYear, calendarService.data.selectedMonth) || dayEvent.isHovered ? 'brightness(1)' : 'brightness(0.7)'
         }"
