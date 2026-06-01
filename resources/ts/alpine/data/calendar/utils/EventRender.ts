@@ -71,13 +71,17 @@ export default class EventRender {
         weekIndex: string,
     ): void {
         Alpine.nextTick(() => {
-            if (!(el instanceof HTMLElement))
+            if (!(el instanceof HTMLElement)) {
                 throw new Error("Invalid DOM element");
+            }
+
             if (
-                initialLevelNumber >= endLevelNumber - 1 ||
+                // initialLevelNumber >= endLevelNumber - 1 ||
                 !this.weeksLayersData[weekIndex]
-            )
+            ) {
                 return;
+            }
+            console.log(initialLevelNumber, endLevelNumber, weekIndex);
 
             const layers = this.weeksLayersData[weekIndex];
             let totalHeight = 0;

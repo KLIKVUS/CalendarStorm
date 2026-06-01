@@ -79,14 +79,16 @@ export default class EventService {
     ): ConvertedEventData[] {
         events.forEach((event1) => {
             for (let layer = 1; ; layer++) {
-                const isAvailable = events.every((event2) => {
+                // Проверяем, есть ли коллизия с уже размещёнными событиями на этом слое
+                const hasCollisionOnLayer = events.some((event2) => {
                     if (
                         event2.data.id === event1.data.id ||
-                        (event2.layer >= 0 && event2.layer !== layer)
-                    )
-                        return true;
-
-                    return !areIntervalsOverlapping(
+                        event2.layer !== layer
+                    ) {
+                        return false; // Игнорируем, если это не тот слой
+                    }
+                    // Есть коллизия дат на этом слое
+                    return areIntervalsOverlapping(
                         {
                             start: format(event1.data.beginning, "yyyy-MM-dd"),
                             end: format(event1.data.ending, "yyyy-MM-dd"),
@@ -99,7 +101,7 @@ export default class EventService {
                     );
                 });
 
-                if (isAvailable) {
+                if (!hasCollisionOnLayer) {
                     event1.layer = layer;
                     break;
                 }

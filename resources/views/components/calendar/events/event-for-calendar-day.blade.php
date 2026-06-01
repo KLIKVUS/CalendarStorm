@@ -11,7 +11,6 @@
                 dayEvent.layer,
                 weekIndex,
             );
-            initialLevelNumber = dayEvent.layer;
         });
     }"
     :style="{ height: `${dayEvent.offsetHeight}px` }"

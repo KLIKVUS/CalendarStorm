@@ -51,18 +51,57 @@
                 <div
                     class="relative mt-2 space-y-2"
                     x-data="{
-                        dayEvents: dayEvents = new Date(monthData.year, monthData.month, day).getDay() == 1 || day == 1 ?
-                            eventService.GetEventsForDay(monthData.year, monthData.month, day) : eventService.GetEventsStartingOn(monthData.year, monthData.month, day),
-                        weekIndex: eventService.eventRender.GetDayWeekIndex(monthData.year, monthData.month, day),
+                        dayEvents: null,
+                        weekIndex: '',
                         initialLevelNumber: 0,
                         eventLengths: {},
                     }"
-                    x-show="dayEvents.length"
+                    x-init="
+                        const isMonday = new Date(
+                            monthData.year,
+                            monthData.month,
+                            day
+                        ).getDay() == 1;
+
+                        dayEvents = isMonday
+                            ? eventService.GetEventsForDay(
+                                  monthData.year,
+                                  monthData.month,
+                                  day,
+                              )
+                            : eventService.GetEventsStartingOn(
+                                  monthData.year,
+                                  monthData.month,
+                                  day,
+                              );
+
+                        weekIndex = eventService.eventRender.GetDayWeekIndex(
+                            monthData.year,
+                            monthData.month,
+                            day,
+                        );
+
+                        dayEvents.forEach((event) => {
+                            initialLevelNumber = Math.max(
+                                initialLevelNumber,
+                                event.layer,
+                            );
+
+                            if (!eventLengths[event.data.id]) {
+                                eventLengths[event.data.id] = {};
+                            }
+
+                            const height = eventService.eventRender.GetEventLengthRelativeToWeekDay(
+                                new Date(monthData.year, monthData.month, day),
+                                event.data,
+                            );
+
+                            eventLengths[event.data.id][weekIndex] = height;
+                        });
+                    "
+                    x-show="dayEvents?.length"
                 >
-                    <template
-                        x-for="dayEvent in dayEvents"
-                        hidden
-                    >
+                    <template x-for="dayEvent in dayEvents" hidden>
                         <x-calendar.events.event-for-calendar-day />
                     </template>
                 </div>
