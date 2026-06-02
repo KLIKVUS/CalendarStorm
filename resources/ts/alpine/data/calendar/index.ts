@@ -28,23 +28,25 @@ export default class CalendarComponent implements Alpine.AlpineComponent<Calenda
     }
 
     // --- Инициализация  ---
-    public async init(): Promise<void> {
+    public init(): void {
         this.loaderService.addTask({ name: "CalendarInit" });
 
-        await this.eventService.init();
+        Alpine.nextTick(async () => {
+            await this.eventService.init();
 
-        const calendarData = this.calendarService.data;
-        const selectedDate = new Date(
-            calendarData.selectedYear,
-            calendarData.selectedMonth,
-        );
-        const selectedMonthId =
-            this.calendarService.monthsService.monthGenerator.GetMonthId(
-                selectedDate,
+            const calendarData = this.calendarService.data;
+            const selectedDate = new Date(
+                calendarData.selectedYear,
+                calendarData.selectedMonth,
             );
-        this.scrollService.scrollToMonth(selectedMonthId);
+            const selectedMonthId =
+                this.calendarService.monthsService.monthGenerator.GetMonthId(
+                    selectedDate,
+                );
+            await this.scrollService.scrollToMonth(selectedMonthId);
 
-        this.loaderService.removeTask("CalendarInit");
+            this.loaderService.removeTask("CalendarInit");
+        });
     }
     // --- ### ---
 

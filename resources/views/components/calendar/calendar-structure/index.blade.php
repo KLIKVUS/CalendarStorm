@@ -1,6 +1,6 @@
 <div class="relative basis-full overflow-hidden">
     <div class="absolute left-0 right-0 mr-2.5 mt-8">
-        <x-calendar.day-names class="absolute z-[2] w-full" />
+        <x-calendar.day-names class="absolute z-[4] w-full" />
     </div>
 
     <div

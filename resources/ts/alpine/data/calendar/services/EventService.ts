@@ -1,23 +1,33 @@
 import Alpine from "alpinejs";
 import {
-    areIntervalsOverlapping,
     compareAsc,
     compareDesc,
+    eachMonthOfInterval,
+    eachWeekOfInterval,
     format,
+    isBefore,
     isWithinInterval,
+    parseISO,
+    startOfDay,
 } from "date-fns";
 
 import LoaderService from "./LoaderService";
 
 import EventRender from "../utils/EventRender";
 
-import type { ApiRes, ConvertedEventData, EventData } from "../types";
+import type {
+    ApiRes,
+    ConvertedEventData,
+    EventData,
+    EventsByWeek,
+} from "../types";
 import { api } from "../utils/ApiClient";
 
 export default class EventService {
     public eventRender: EventRender;
     private receivedEvents: EventData[];
     private _events: ConvertedEventData[] = [];
+    private _eventsByWeek: EventsByWeek = {};
 
     constructor({ events = [] }: { events?: EventData[] }) {
         this.eventRender = new EventRender();
@@ -38,6 +48,7 @@ export default class EventService {
         const sortedEvents = this.SortEventsByDate(events, "asc");
         const convertedEvents = this.ConvertEventData(sortedEvents);
         const assignEventLayers = this.AssignEventLayers(convertedEvents);
+        this.AssignEventsToDay(assignEventLayers);
 
         this._events = assignEventLayers;
 
@@ -77,38 +88,82 @@ export default class EventService {
     private AssignEventLayers(
         events: ConvertedEventData[],
     ): ConvertedEventData[] {
-        events.forEach((event1) => {
-            for (let layer = 1; ; layer++) {
-                // Проверяем, есть ли коллизия с уже размещёнными событиями на этом слое
-                const hasCollisionOnLayer = events.some((event2) => {
-                    if (
-                        event2.data.id === event1.data.id ||
-                        event2.layer !== layer
-                    ) {
-                        return false; // Игнорируем, если это не тот слой
-                    }
-                    // Есть коллизия дат на этом слое
-                    return areIntervalsOverlapping(
-                        {
-                            start: format(event1.data.beginning, "yyyy-MM-dd"),
-                            end: format(event1.data.ending, "yyyy-MM-dd"),
-                        },
-                        {
-                            start: format(event2.data.beginning, "yyyy-MM-dd"),
-                            end: format(event2.data.ending, "yyyy-MM-dd"),
-                        },
-                        { inclusive: true },
-                    );
-                });
+        const layerEnds: Date[] = [];
 
-                if (!hasCollisionOnLayer) {
-                    event1.layer = layer;
-                    break;
-                }
+        for (const event of events) {
+            let layer = 1;
+
+            while (
+                layerEnds[layer] &&
+                layerEnds[layer] >= new Date(event.data.beginning)
+            ) {
+                layer++;
             }
-        });
+
+            layerEnds[layer] = new Date(event.data.ending);
+            event.layer = layer;
+        }
 
         return events;
+    }
+
+    private AssignEventsToDay(events: ConvertedEventData[]): void {
+        for (const event of events) {
+            const startDate = parseISO(event.data.beginning);
+            const endDate = parseISO(event.data.ending);
+
+            const datesToRegister = [
+                startDate,
+
+                ...eachWeekOfInterval(
+                    {
+                        start: startDate,
+                        end: endDate,
+                    },
+                    {
+                        weekStartsOn: 1,
+                    },
+                ).filter((date) => !isBefore(date, startDate)),
+
+                ...eachMonthOfInterval({
+                    start: startDate,
+                    end: endDate,
+                }).filter((date) => !isBefore(date, startDate)),
+            ];
+
+            const uniqueDates = new Map<number, Date>();
+
+            for (const date of datesToRegister) {
+                uniqueDates.set(startOfDay(date).getTime(), date);
+            }
+
+            for (const date of uniqueDates.values()) {
+                const dayId = this.eventRender.GetDayIndex(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate(),
+                );
+
+                this.PushEventToLayerLogic(dayId, event);
+            }
+        }
+    }
+    private PushEventToLayerLogic(
+        dayId: string,
+        event: ConvertedEventData,
+    ): void {
+        if (!this._eventsByWeek[dayId]) {
+            this._eventsByWeek[dayId] = {
+                events: [],
+                layersCount: event.layer,
+            };
+        } else {
+            const week = this._eventsByWeek[dayId];
+
+            week.layersCount = Math.max(week.layersCount, event.layer);
+        }
+
+        this._eventsByWeek[dayId].events.push(event);
     }
 
     public GetEventsForDay(
@@ -132,30 +187,14 @@ export default class EventService {
         });
     }
 
-    public GetEventsStartingOn(
-        year: number,
-        month: number,
-        day: number,
-    ): ConvertedEventData[] {
-        const date = format(new Date(year, month, day), "yyyy-MM-dd");
-
-        return this._events.filter((event) => {
-            const evStart = format(
-                new Date(event.data.beginning),
-                "yyyy-MM-dd",
-            );
-
-            return isWithinInterval(date, {
-                start: evStart,
-                end: evStart,
-            });
-        });
-    }
-
     public get events(): ConvertedEventData[] {
         return this._events;
     }
     private set events(value: ConvertedEventData[]) {
         this._events = value;
+    }
+
+    public get eventsByWeek(): EventsByWeek {
+        return this._eventsByWeek;
     }
 }

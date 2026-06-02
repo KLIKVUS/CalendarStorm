@@ -5,7 +5,7 @@
     x-intersect:leave.margin.30%="$nextTick(() => !loaderService.isLoading && calendarService.monthsService.MonthUnShown(monthData.id))"
 >
     <div
-        class="sticky top-0 z-[2] col-span-full h-8 text-center text-lg font-bold"
+        class="sticky top-0 z-[3] col-span-full h-8 text-center text-lg font-bold"
         x-text="`${window.translations.calendar.months[monthData.monthName]} ${monthData.year}`"
         :class="{
             'bg-blue-500 dark:bg-blue-500 text-white dark:text-white': new Date(monthData.year, monthData.month, 1)
@@ -27,13 +27,7 @@
         hidden
     >
         <x-calendar.calendar-structure.day
-            class="flex flex-col bg-gray-50 dark:bg-gray-800"
-            x-on:mouseover="isHovered = true"
-            x-on:mouseleave="isHovered = false"
-            ::class="{
-                'bg-gray-50 dark:bg-gray-800': !isHovered,
-                'bg-gray-100 dark:bg-gray-700': isHovered,
-            }"
+            class="flex flex-col bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"
         >
             <div
                 class="px-3 py-2 text-center leading-none transition duration-100 ease-in-out sm:mx-2 sm:mt-2 sm:rounded-lg sm:py-0.5"
@@ -47,62 +41,29 @@
             >
             </div>
 
-            <template x-if="!loaderService.isLoading">
+            <template
+                x-if="!loaderService.isLoading"
+                hidden
+            >
                 <div
                     class="relative mt-2 space-y-2"
                     x-data="{
-                        dayEvents: null,
-                        weekIndex: '',
-                        initialLevelNumber: 0,
-                        eventLengths: {},
+                        dayIndex: '',
+                        dayEventsData: {}
                     }"
-                    x-init="
-                        const isMonday = new Date(
-                            monthData.year,
-                            monthData.month,
-                            day
-                        ).getDay() == 1;
-
-                        dayEvents = isMonday
-                            ? eventService.GetEventsForDay(
-                                  monthData.year,
-                                  monthData.month,
-                                  day,
-                              )
-                            : eventService.GetEventsStartingOn(
-                                  monthData.year,
-                                  monthData.month,
-                                  day,
-                              );
-
-                        weekIndex = eventService.eventRender.GetDayWeekIndex(
-                            monthData.year,
-                            monthData.month,
-                            day,
-                        );
-
-                        dayEvents.forEach((event) => {
-                            initialLevelNumber = Math.max(
-                                initialLevelNumber,
-                                event.layer,
-                            );
-
-                            if (!eventLengths[event.data.id]) {
-                                eventLengths[event.data.id] = {};
-                            }
-
-                            const height = eventService.eventRender.GetEventLengthRelativeToWeekDay(
-                                new Date(monthData.year, monthData.month, day),
-                                event.data,
-                            );
-
-                            eventLengths[event.data.id][weekIndex] = height;
-                        });
-                    "
-                    x-show="dayEvents?.length"
+                    x-init="() => {
+                        dayIndex = eventService.eventRender.GetDayIndex(monthData.year, monthData.month, day);
+                        dayEventsData = eventService.eventsByWeek[dayIndex];
+                    }"
                 >
-                    <template x-for="dayEvent in dayEvents" hidden>
-                        <x-calendar.events.event-for-calendar-day />
+                    <template x-if="dayEventsData">
+                        <template
+                            x-for="dayEventLayer in dayEventsData.layersCount"
+                            :key="dayIndex + '-' + dayEventLayer"
+                            hidden
+                        >
+                            <x-calendar.events.event-for-calendar-day />
+                        </template>
                     </template>
                 </div>
             </template>

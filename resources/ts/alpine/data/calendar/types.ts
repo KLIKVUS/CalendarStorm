@@ -57,3 +57,12 @@ export interface CalendarData {
 export interface LoaderTask {
     name: string;
 }
+
+export interface WeekEventsData {
+    events: ConvertedEventData[];
+    layersCount: number;
+}
+
+export interface EventsByWeek {
+    [key: string]: WeekEventsData;
+}
