@@ -18,7 +18,7 @@ export default class MonthsService {
         const date = new Date(year, month);
 
         validatorService.ValidateDate(date);
-        this.data.months = this.monthGenerator.InitializedMonths(date);
+        this.months = this.monthGenerator.InitializedMonths(date);
 
         Alpine.effect(() => {
             if (this.data.months.length === 0) return;
@@ -140,8 +140,9 @@ export default class MonthsService {
     public get months(): MonthData[] {
         return this.data.months;
     }
-    private set months(value: MonthData[]) {
-        this.data.months = value;
+    private set months(months: MonthData[]) {
+        this.data.months.length = 0;
+        this.data.months.push(...months);
     }
     // --- ### ---
 }

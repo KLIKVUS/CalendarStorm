@@ -1,6 +1,6 @@
 <!-- ========== HEADER ========== -->
 <header
-    class="max-w-[85rem] mx-auto bg-gray-50 dark:bg-gray-800 border-b-4 border-gray-400 dark:border-gray-900 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full md:mt-5 md:rounded-t-lg transition-[background-color,margin] duration-200 ease-in"
+    class="max-w-[85rem] mx-auto bg-gray-50 dark:bg-gray-800 border-b-4 border-gray-400 dark:border-gray-900 flex flex-wrap md:justify-start md:flex-nowrap z-[5] w-full md:mt-5 md:rounded-t-lg transition-[background-color,margin] duration-200 ease-in"
     x-data="{
         isMenuOpen: false,
         isSearchOpen: false,

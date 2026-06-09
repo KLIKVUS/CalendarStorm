@@ -4,6 +4,7 @@ import LoaderService, { LoaderServiceClass } from "./services/LoaderService";
 import CalendarService from "./services/CalendarService";
 import EventService from "./services/EventService";
 import ScrollService from "./services/ScrollService";
+import ModalService from "./services/ModalService";
 
 import type { CalendarConfig } from "./types";
 import { DAY_NAMES } from "./constants";
@@ -17,6 +18,7 @@ export default class CalendarComponent implements Alpine.AlpineComponent<Calenda
     public scrollService: ScrollService;
     public eventService: EventService;
     public calendarService: CalendarService;
+    public modalService: ModalService;
 
     constructor(config: CalendarConfig = {}) {
         this.config = config;
@@ -25,6 +27,7 @@ export default class CalendarComponent implements Alpine.AlpineComponent<Calenda
         this.scrollService = new ScrollService();
         this.eventService = new EventService({ events: this.config.events });
         this.calendarService = new CalendarService();
+        this.modalService = new ModalService();
     }
 
     // --- Инициализация  ---

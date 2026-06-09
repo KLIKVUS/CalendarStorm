@@ -13,8 +13,8 @@
 @endphp
 
 <div
+    class="flex items-center gap-x-4 rounded-xl border-4 border-white bg-white p-4 drop-shadow-xl transition-colors hover:border-gray-50 dark:border-gray-700 dark:bg-gray-700 dark:hover:border-gray-600"
     {{ $attributes }}
-    class="flex gap-x-4 items-center p-4 bg-white dark:bg-gray-700 rounded-xl drop-shadow-xl border-4 border-white dark:border-gray-700 hover:border-gray-50 dark:hover:border-gray-600 transition-colors"
     x-data="{
         show: {{ $show }},
         timer: null,
@@ -47,7 +47,7 @@
     }"
     @mouseenter="clearTimeout(timer)"
     @mouseleave="setupTimer()"
-    x-show="show"
+    x-show.transition="show"
     x-transition:enter="transition-opacity duration-1000"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -55,7 +55,10 @@
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
 >
-    <x-icon name="{{ $icon }}" class="size-8 shrink-0 {{ $colors[$type] }}" />
+    <x-icon
+        class="{{ $colors[$type] }} size-8 shrink-0"
+        name="{{ $icon }}"
+    />
 
     <div class="grow">
         {{ $slot }}
@@ -63,8 +66,8 @@
 
     <div>
         <button
+            class="focus:outline-hidden inline-flex items-center gap-x-2 rounded-full border border-transparent p-2 text-sm font-semibold text-gray-500 hover:bg-gray-50 focus:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 dark:text-neutral-400 dark:hover:bg-gray-600 dark:focus:bg-neutral-700"
             type="button"
-            class="p-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 dark:text-neutral-400 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-hidden focus:bg-gray-50 dark:focus:bg-neutral-700 disabled:opacity-50 disabled:pointer-events-none"
             @click="closePopup()"
         >
             <span class="sr-only">__('Dismiss')</span>

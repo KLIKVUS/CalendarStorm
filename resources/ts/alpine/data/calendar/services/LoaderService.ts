@@ -17,7 +17,11 @@ class LoaderService {
         this.checkTasks();
     }
     public removeTask(taskName: string) {
-        this.data.tasks = this.data.tasks.filter((t) => t.name !== taskName);
+        const index = this.data.tasks.findIndex((t) => t.name === taskName);
+
+        if (index !== -1) {
+            this.data.tasks.splice(index, 1);
+        }
         this.checkTasks();
     }
 

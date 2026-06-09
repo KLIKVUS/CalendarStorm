@@ -4,7 +4,7 @@
     </div>
 
     <div
-        class="relative h-full flex min-h-80 flex-col gap-y-[2px] overflow-x-clip overflow-y-scroll border-t-2 bg-gray-200 dark:border-slate-900 dark:bg-slate-900 [&>div:has(.month-name-spacer):first-of-type_.month-name-spacer]:h-9 [&>div:has(.month-name-spacer):not(:first-of-type)_.month-name-spacer]:hidden"
+        class="relative flex h-full min-h-80 flex-col gap-y-[2px] overflow-x-clip overflow-y-scroll border-t-2 bg-gray-200 dark:border-slate-900 dark:bg-slate-900 [&>div:has(.month-name-spacer):first-of-type_.month-name-spacer]:h-9 [&>div:has(.month-name-spacer):not(:first-of-type)_.month-name-spacer]:hidden"
         x-ref="calendar"
         {{-- :class="{
             'overflow-y-clip': loaderService.isLoading,
@@ -29,4 +29,6 @@
     </div>
 
     <x-calendar.loader />
+
+    <x-calendar.modal.edit />
 </div>

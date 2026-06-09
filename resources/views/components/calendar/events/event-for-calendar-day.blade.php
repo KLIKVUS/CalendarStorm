@@ -1,52 +1,74 @@
+@props(['dayEvent'])
+
 <div
-    class="h-6"
+    class="absolute left-0 z-[1] flex h-6 items-center justify-center overflow-hidden border-2 bg-[var(--event-color)] px-2 py-0 transition-colors"
     x-data="{
-        dayEvent: dayEventsData.events.find(item => item.layer === dayEventLayer),
-        currentDate: new Date(monthData.year, monthData.month, day),
+        currentDate: undefined,
+        isSameDay: undefined,
+        isSameWeek: undefined,
+        isSameMonth: undefined,
+        isEventIntersectMonth: undefined,
+        openEventModal: function() {
+            if (!{{ $dayEvent }}.globalData.data.rights_of_the_current_user.is_user_can_update) return;
+            modalService.OpenModal('EditEvent');
+            modalService.SetModalData('EventModal', {{ $dayEvent }}.globalData.data);
+        }
     }"
-    {{-- :style="{ height: `${dayEvent?.offsetHeight || 30}px` }" --}}
+    x-init="() => {
+        $nextTick(() => {
+            currentDate = new Date(monthData.year, monthData.month, day);
+            isSameDay = eventService.eventRender.IsSameDay({{ $dayEvent }}.globalData.data.beginning, currentDate);
+            isSameWeek = eventService.eventRender.IsSameWeek({{ $dayEvent }}.globalData.data.ending, currentDate);
+            isSameMonth = eventService.eventRender.IsSameMonth({{ $dayEvent }}.globalData.data.ending, currentDate);
+            isEventIntersectMonth = eventService.eventRender.IsEventIntersectMonth({{ $dayEvent }}.globalData.data, calendarService.data.selectedYear, calendarService.data.selectedMonth);
+        });
+
+        $watch(() => [
+            calendarService.data.selectedMonth,
+            calendarService.data.selectedYear,
+        ], ([newMonth, newYear], [oldMonth, oldYear]) => {
+            if (
+                newMonth == oldMonth &&
+                newYear == oldYear &&
+                isEventIntersectMonth != undefined
+            ) return;
+
+            isEventIntersectMonth = eventService.eventRender.IsEventIntersectMonth({{ $dayEvent }}.globalData.data, newYear, newMonth);
+        })
+    }"
+    @mouseover.stop="{{ $dayEvent }}.globalData.isHovered = true"
+    @mouseout.stop="{{ $dayEvent }}.globalData.isHovered = false"
+    :style="{
+        'right': eventService.eventRender.GetEventRight(monthData, day, {{ $dayEvent }}.globalData),
+        '--event-color': {{ $dayEvent }}.globalData.data.color,
+        'filter': isEventIntersectMonth || {{ $dayEvent }}.globalData.isHovered ?
+            'brightness(1)' : 'brightness(0.5) opacity(0.5)',
+    }"
+    :class="{
+        'ml-[52.5%]': {{ $dayEvent }}.adjacent.left,
+        'mr-[52.5%]': {{ $dayEvent }}.adjacent.right,
+        'ml-2 rounded-l-lg': isSameDay,
+        'mr-2 rounded-r-lg': isSameWeek && isSameMonth,
+        'border-l-0': !isSameDay,
+        'border-r-0': !isSameWeek || !isSameMonth,
+        'border-blue-700 dark:border-blue-500 z-[2]': {{ $dayEvent }}.globalData.isHovered,
+        'border-gray-700 dark:border-gray-400': isEventIntersectMonth && !{{ $dayEvent }}.globalData.isHovered,
+        'text-gray-300 border-gray-300 dark:text-gray-700 dark:border-gray-700':
+            !isEventIntersectMonth && !{{ $dayEvent }}.globalData.isHovered,
+    }"
+    @click="openEventModal()"
 >
-    <template x-if="dayEvent">
-        <div
-            class="absolute left-0 z-[1] flex h-6 items-center justify-center overflow-hidden border-2 bg-[var(--event-color)] px-2 py-0 transition-colors"
-            x-data="{
-                isSameDay: eventService.eventRender.IsSameDay(dayEvent.data.beginning, currentDate),
-                isSameWeek: eventService.eventRender.IsSameWeek(dayEvent.data.ending, currentDate),
-                isSameMonth: eventService.eventRender.IsSameMonth(dayEvent.data.ending, currentDate),
-                get isEventIntersectMonth() {
-                    return eventService.eventRender.IsEventIntersectMonth(
-                        dayEvent.data,
-                        calendarService.data.selectedYear,
-                        calendarService.data.selectedMonth,
-                    );
-                }
-            }"
-            x-init="$nextTick(() => { dayEvent.offsetHeight = $el.offsetHeight })"
-            @mouseover.stop="dayEvent.isHovered = true"
-            @mouseout.stop="dayEvent.isHovered = false"
-            :style="{
-                'right': eventService.eventRender.GetEventRight(monthData, day, dayEvent.data),
-                '--event-color': dayEvent.data.color,
-                'filter': isEventIntersectMonth || dayEvent.isHovered ?
-                    'brightness(1)' : 'brightness(0.7)',
-            }"
-            :class="{
-                'ml-2 rounded-l-lg': isSameDay,
-                'mr-2 rounded-r-lg': isSameWeek && isSameMonth,
-                'border-l-0': !isSameDay,
-                'border-r-0': !isSameWeek && !isSameMonth,
-                'border-blue-700 dark:border-blue-500 z-[2]': dayEvent.isHovered,
-                'border-gray-700 dark:border-gray-400': isEventIntersectMonth && !dayEvent.isHovered,
-                'text-gray-300 border-gray-300 dark:text-gray-700 dark:border-gray-700':
-                    !isEventIntersectMonth && !dayEvent.isHovered,
-            }"
-        >
-            <template x-if="isSameDay || day == 1">
-                <p
-                    class="truncate text-sm font-medium leading-tight"
-                    x-text="dayEvent.data.name"
-                ></p>
-            </template>
-        </div>
+    {{-- <span
+        class="absolute left-0 text-xs text-slate-500"
+        x-text="'#'+{{ $dayEvent }}.globalData.data.id"
+    ></span> --}}
+    <template
+        x-if="isSameDay || day == 1"
+        hidden
+    >
+        <p
+            class="truncate text-sm font-medium leading-tight"
+            x-text="{{ $dayEvent }}.globalData.data.name"
+        ></p>
     </template>
 </div>

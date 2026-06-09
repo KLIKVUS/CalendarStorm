@@ -17,11 +17,29 @@ export interface CalendarConfig {
 export interface ApiRes {
     data: any;
     success: boolean;
+    message: string;
 }
 
 export interface CalendarServiceParams extends Partial<MonthYear> {}
 
-export interface ConvertedEventData {
+export interface EventsByDay {
+    [key: string]: DayEventsData;
+}
+
+export interface DayEventsData {
+    events: Array<Array<DayEventData>>;
+}
+
+export interface DayEventData {
+    globalData: GlobalEventData;
+    dayDate: Date;
+    adjacent: {
+        left: boolean;
+        right: boolean;
+    };
+}
+
+export interface GlobalEventData {
     data: EventData;
     layer: number;
     offsetHeight: number;
@@ -56,13 +74,4 @@ export interface CalendarData {
 
 export interface LoaderTask {
     name: string;
-}
-
-export interface WeekEventsData {
-    events: ConvertedEventData[];
-    layersCount: number;
-}
-
-export interface EventsByWeek {
-    [key: string]: WeekEventsData;
 }

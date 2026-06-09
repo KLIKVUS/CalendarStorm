@@ -13,7 +13,7 @@ import {
     min,
 } from "date-fns";
 
-import type { EventData, MonthData } from "../types";
+import type { GlobalEventData, EventData, MonthData } from "../types";
 
 export default class EventRender {
     public GetEventLengthRelativeToWeekDay(
@@ -86,11 +86,11 @@ export default class EventRender {
         );
     }
 
-    public GetEventRight(monthData: MonthData, day: number, event: EventData) {
+    public GetEventRight(monthData: MonthData, day: number, event: GlobalEventData) {
         const weekDayDate = new Date(monthData.year, monthData.month, day);
         const eventLength = this.GetEventLengthRelativeToWeekDay(
             weekDayDate,
-            event,
+            event.data,
         );
         const trimmedLength = this.getTrimmedEventLengthInLastWeekOfMonth(
             weekDayDate,

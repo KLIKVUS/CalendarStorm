@@ -17,7 +17,10 @@
     ></div>
     <div class="month-name-spacer col-span-full"></div>
 
-    <template x-if="monthData.leadingEmptyDays">
+    <template
+        x-if="monthData.leadingEmptyDays"
+        hidden
+    >
         <x-calendar.calendar-structure.day ::style="`grid-column: span ${monthData.leadingEmptyDays}`" />
     </template>
 
@@ -30,7 +33,7 @@
             class="flex flex-col bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"
         >
             <div
-                class="px-3 py-2 text-center leading-none transition duration-100 ease-in-out sm:mx-2 sm:mt-2 sm:rounded-lg sm:py-0.5"
+                class="px-3 py-2 text-center leading-none transition duration-100 ease-in-out sm:m-2 sm:rounded-lg sm:py-0.5"
                 x-text="day"
                 :class="{
                     'bg-blue-500 text-white dark:text-white': new Date(monthData.year, monthData.month, day)
@@ -41,32 +44,38 @@
             >
             </div>
 
-            <template
-                x-if="!loaderService.isLoading"
-                hidden
+            <div
+                class="relative space-y-2"
+                x-data="{
+                    dayIndex: eventService.eventRender.GetDayIndex(monthData.year, monthData.month, day),
+                }"
             >
-                <div
-                    class="relative mt-2 space-y-2"
-                    x-data="{
-                        dayIndex: '',
-                        dayEventsData: {}
-                    }"
-                    x-init="() => {
-                        dayIndex = eventService.eventRender.GetDayIndex(monthData.year, monthData.month, day);
-                        dayEventsData = eventService.eventsByWeek[dayIndex];
-                    }"
+                <template
+                    x-if="eventService.eventsByDay[dayIndex]"
+                    hidden
                 >
-                    <template x-if="dayEventsData">
-                        <template
-                            x-for="dayEventLayer in dayEventsData.layersCount"
-                            :key="dayIndex + '-' + dayEventLayer"
-                            hidden
-                        >
-                            <x-calendar.events.event-for-calendar-day />
-                        </template>
+                    <template
+                        x-for="(dayEvents, eventLayer) in eventService.eventsByDay[dayIndex].events"
+                        :key="dayIndex + '-' + eventLayer"
+                        hidden
+                    >
+                        <div class="h-6">
+                            <template
+                                x-if="dayEvents && dayEvents[0]"
+                                hidden
+                            >
+                                <x-calendar.events.event-for-calendar-day dayEvent="dayEvents[0]" />
+                            </template>
+                            <template
+                                x-if="dayEvents && dayEvents[1]"
+                                hidden
+                            >
+                                <x-calendar.events.event-for-calendar-day dayEvent="dayEvents[1]" />
+                            </template>
+                        </div>
                     </template>
-                </div>
-            </template>
+                </template>
+            </div>
 
             <x-calendar.buttons.add-event />
         </x-calendar.calendar-structure.day>
