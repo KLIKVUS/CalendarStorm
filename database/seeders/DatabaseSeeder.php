@@ -18,17 +18,20 @@ class DatabaseSeeder extends Seeder
                 'login' => 'root',
                 'password' => 'password',
             ]);
+        User::factory()
+            ->count(5)
+            ->create();
 
         Calendar::factory()
-            ->count(15)
+            ->count(20)
             ->create();
 
         Event::factory()
-            ->count(250)
+            ->count(150)
             ->create();
 
         CalendarEvent::factory()
-            ->count(250)
+            ->count(150)
             ->create();
     }
 }

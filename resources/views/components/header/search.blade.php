@@ -1,4 +1,4 @@
-<div {{ $attributes->merge(['class' => 'relative']) }}>
+{{-- <div {{ $attributes->merge(['class' => 'relative']) }}>
     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
         <x-tabler-search class="size-5 text-gray-500 dark:text-gray-400" />
         <span class="sr-only">{{ __('Search icon') }}</span>
@@ -10,4 +10,4 @@
         type="search"
         placeholder="{{ __('Search') }}"
     >
-</div>
+</div> --}}

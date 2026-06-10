@@ -17,7 +17,7 @@
             <div class="flex justify-end items-center">
                 <x-header.theme-switcher class="hidden md:block" />
 
-                <x-header.menu-button
+                {{-- <x-header.menu-button
                     @click="isSearchOpen = !isSearchOpen"
                     class="md:hidden"
                     :hint="__('Поиск')"
@@ -29,7 +29,7 @@
                     <template x-if="!isSearchOpen">
                         <x-tabler-search class="size-5" />
                     </template>
-                </x-header.menu-button>
+                </x-header.menu-button> --}}
 
                 <x-header.menu-button
                     @click="isMenuOpen = !isMenuOpen"
