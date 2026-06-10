@@ -11,10 +11,11 @@
     <textarea
         class="w-full rounded-lg border-2 border-gray-300 bg-gray-50 px-4 py-2 leading-tight hover:border-blue-500 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400"
         id="{{ $id }}"
-        @if ($name) name="{{ $name }}" @endif
         rows="{{ $rows }}"
         placeholder="{{ $placeholder }}"
         x-model="{{ $model }}"
+        {{ $attributes }}
+        @if ($name) name="{{ $name }}" @endif
     ></textarea>
 
     {{ $slot }}

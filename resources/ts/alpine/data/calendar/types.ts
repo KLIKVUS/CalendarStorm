@@ -11,6 +11,11 @@ export interface CalendarConfig {
     enableEventsLoading?: boolean;
     enableEventRendering?: boolean;
 
+    calendarId?: number,
+    rights_of_the_current_user?: {
+        is_user_can_create_events?: boolean,
+    },
+
     events?: EventData[];
 }
 
@@ -74,4 +79,5 @@ export interface CalendarData {
 
 export interface LoaderTask {
     name: string;
+    count?: number;
 }

@@ -9,9 +9,8 @@
         isSameMonth: undefined,
         isEventIntersectMonth: undefined,
         openEventModal: function() {
-            if (!{{ $dayEvent }}.globalData.data.rights_of_the_current_user.is_user_can_update) return;
-            modalService.OpenModal('EditEvent');
-            modalService.SetModalData('EventModal', {{ $dayEvent }}.globalData.data);
+            $store.modal.SetModalData('EventModal.ReadEvent', {{ $dayEvent }}.globalData.data);
+            $store.modal.OpenModal('ReadEvent');
         }
     }"
     x-init="() => {

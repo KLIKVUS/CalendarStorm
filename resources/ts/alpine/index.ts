@@ -12,6 +12,7 @@ import TimePicker from "./data/timePicker";
 
 import { createBreakpointsStore } from "./store/breakpoints";
 import popup from "./store/popup";
+import modal from "./store/modal";
 
 window.Alpine = Alpine;
 
@@ -23,7 +24,11 @@ Alpine.plugin(validate);
 // Локальные настройки пользователя (хранятся только на стороне клиента)
 Alpine.data("localUserSettings", localUserSettings);
 // Функции основного календаря
-const globalCalendarInterface = new CalendarInterface();
+const globalCalendarInterface = new CalendarInterface({
+    rights_of_the_current_user: {
+        is_user_can_create_events: true
+    }
+});
 Alpine.data("GlobalCalendar", () => globalCalendarInterface);
 // Функции для скрола при помощи драга
 Alpine.data("dragScroll", dragScroll);
@@ -50,6 +55,8 @@ Alpine.data(
 Alpine.store("breakpoints", createBreakpointsStore());
 
 Alpine.store("popups", popup);
+
+Alpine.store("modal", modal);
 
 Alpine.start();
 

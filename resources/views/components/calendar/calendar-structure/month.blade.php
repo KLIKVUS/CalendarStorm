@@ -1,7 +1,7 @@
 <div
     class="grid grid-cols-7 gap-[2px]"
     :id="monthData.id"
-    x-intersect:enter.margin.-50%="$nextTick(() => !loaderService.isLoading &&  calendarService.SelectMonth(monthData.year, monthData.month))"
+    x-intersect:enter.margin.-50%="$nextTick(() => !loaderService.isLoading && calendarService.SelectMonth(monthData.year, monthData.month))"
     x-intersect:leave.margin.30%="$nextTick(() => !loaderService.isLoading && calendarService.monthsService.MonthUnShown(monthData.id))"
 >
     <div
@@ -30,7 +30,13 @@
         hidden
     >
         <x-calendar.calendar-structure.day
-            class="flex flex-col bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"
+            class="flex flex-col bg-gray-50 dark:bg-gray-800"
+            x-data="{ hovered: false }"
+            @mouseover.self="hovered = true"
+            @mouseout.self="hovered = false"
+            ::class="{
+                '!bg-gray-100 dark:!bg-gray-700': hovered,
+            }"
         >
             <div
                 class="px-3 py-2 text-center leading-none transition duration-100 ease-in-out sm:m-2 sm:rounded-lg sm:py-0.5"
@@ -77,7 +83,9 @@
                 </template>
             </div>
 
-            <x-calendar.buttons.add-event />
+            <template x-if="config.rights_of_the_current_user.is_user_can_create_events != false">
+                <x-calendar.buttons.add-event />
+            </template>
         </x-calendar.calendar-structure.day>
     </template>
 

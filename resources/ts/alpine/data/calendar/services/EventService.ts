@@ -39,7 +39,7 @@ export default class EventService {
 
     constructor({ events = [] }: { events?: EventData[] }) {
         this.eventRender = new EventRender();
-        this.eventController = new EventController(this.events);
+        this.eventController = new EventController(this.events, this.ConvertEventData);
         this.receivedEvents = events;
     }
 
@@ -52,6 +52,7 @@ export default class EventService {
         if (this.receivedEvents.length) {
             events = this.ConvertEventData(this.receivedEvents);
         } else if (this.events.length) {
+            console.log(JSON.parse(JSON.stringify(this.events)));
             events = [...this.events];
         } else {
             events = this.ConvertEventData(await this.FetchFromDatabase());

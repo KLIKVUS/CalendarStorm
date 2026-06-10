@@ -17,8 +17,8 @@ class StoreRequest extends FormRequest
             'active' => ['boolean'],
 
             'name' => ['required', 'string'],
-            'description' => ['string'],
-            'link' => ['url'],
+            'description' => ['nullable', 'string'],
+            'link' => ['nullable', 'url'],
             'color' => ['required', 'string'],
 
             'beginning' => ['required', 'date'],

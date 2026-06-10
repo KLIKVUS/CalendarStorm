@@ -21,4 +21,6 @@
             x-model="{{ $model }}"
         />
     </div>
+
+    {{ $slot }}
 </div>

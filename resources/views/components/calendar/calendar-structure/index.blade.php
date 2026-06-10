@@ -30,5 +30,5 @@
 
     <x-calendar.loader />
 
-    <x-calendar.modal.edit />
+    <x-modal.for-event />
 </div>

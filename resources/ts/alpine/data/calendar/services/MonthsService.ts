@@ -22,13 +22,8 @@ export default class MonthsService {
 
         Alpine.effect(() => {
             if (this.data.months.length === 0) return;
-
-            LoaderService.addTask({ name: "monthsService" });
-
             this.RemoveUnshownMonths();
             this.AddMonthsIfNeeded();
-
-            LoaderService.removeTask("monthsService");
         });
     }
     // --- ### ---
@@ -64,9 +59,8 @@ export default class MonthsService {
         Или месяц будет удален, если он не отображается, является последним и перед ним есть не отображаемый месяц.
     */
     private RemoveUnshownMonths(): void {
-        if (!this.months.some((m) => m.isShown)) {
-            return;
-        }
+        if (!this.months.some((m) => m.isShown)) return;
+        LoaderService.addTask({ name: "monthsService.RemoveUnshownMonths" });
 
         let start = 0;
         let end = this.months.length - 1;
@@ -92,6 +86,8 @@ export default class MonthsService {
         const months = this.months.slice(start, end + 1);
 
         this.months = months;
+
+        LoaderService.removeTask("monthsService.RemoveUnshownMonths");
     }
 
     /*
@@ -100,11 +96,15 @@ export default class MonthsService {
         Если последний элемент массива month отображается, добавляет месяц в конец массива.
     */
     private AddMonthsIfNeeded(): void {
+        LoaderService.addTask({ name: "monthsService.AddMonthsIfNeeded" });
+
         const firstMonth = this.months[0];
         const lastMonth = this.months[this.months.length - 1];
 
         if (firstMonth.isShown) this.AddMonth("unshift");
         if (lastMonth.isShown) this.AddMonth("push");
+
+        LoaderService.removeTask("monthsService.AddMonthsIfNeeded");
     }
     private AddMonth(addType: "unshift" | "push"): void {
         const month =

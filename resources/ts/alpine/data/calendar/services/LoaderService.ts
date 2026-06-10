@@ -13,16 +13,37 @@ class LoaderService {
     }
 
     public addTask(task: LoaderTask) {
-        this.data.tasks.push(task);
+        let currentTask = this.data.tasks.find((t) => t.name === task.name);
+
+        if (!currentTask) {
+            this.data.tasks.push(task);
+            currentTask = task;
+        }
+
+        currentTask.count ??= 0;
+        currentTask.count += 1;
+
         this.checkTasks();
     }
-    public removeTask(taskName: string) {
-        const index = this.data.tasks.findIndex((t) => t.name === taskName);
 
-        if (index !== -1) {
+    public removeTask(taskName: string) {
+        const index = this.findTaskIndex(taskName);
+        if (index === -1) return;
+
+        const task = this.data.tasks[index];
+        task.count = (task.count ?? 1) - 1;
+        if (task.count <= 0) {
             this.data.tasks.splice(index, 1);
         }
-        this.checkTasks();
+
+        Alpine.nextTick(() => {
+            this.checkTasks();
+        });
+    }
+
+    private findTaskIndex(taskName: string): number {
+        const index = this.data.tasks.findIndex((t) => t.name === taskName);
+        return index;
     }
 
     private checkTasks() {

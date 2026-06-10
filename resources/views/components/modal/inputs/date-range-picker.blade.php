@@ -16,5 +16,6 @@
         id="{{ $id }}"
         type="text"
         x-model="defaultDatesFormatted"
+        {{ $attributes }}
     >
 </div>

@@ -21,7 +21,6 @@ export default class DateTimePicker {
 
     public init() {
         const input: HTMLElement | null = document.getElementById(this.inputId);
-
         if (!input) throw new Error("Для работы DateRange нужно ID поля ввода");
 
         this.picker = flatpickr(input, {

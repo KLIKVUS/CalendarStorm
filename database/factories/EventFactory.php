@@ -27,7 +27,7 @@ class EventFactory extends Factory
             'name' => fake()->sentence(),
             'description' => fake()->text(),
             'link' => fake()->url(),
-            'color' => fake()->hexColor(),
+            'color' => '#61616180',
             'beginning' => $beginning,
             'ending' => $ending,
         ];

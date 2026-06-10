@@ -1,4 +1,8 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from "axios";
+import axios, {
+    type AxiosInstance,
+    type AxiosRequestConfig,
+    type AxiosResponse,
+} from "axios";
 
 class ApiClient {
     private apiVersion: string = "v1";
@@ -40,9 +44,16 @@ class ApiClient {
     }
 
     public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-        const response: AxiosResponse<T> = await this.client.get(url, config);
-
-        return response.data;
+        try {
+            const response: AxiosResponse<T> = await this.client.get(
+                url,
+                config,
+            );
+            return response.data;
+        } catch (error: any) {
+            error.success = false;
+            return error.response.data;
+        }
     }
 
     public async post<T>(
@@ -50,13 +61,17 @@ class ApiClient {
         data?: unknown,
         config?: AxiosRequestConfig,
     ): Promise<T> {
-        const response: AxiosResponse<T> = await this.client.post(
-            url,
-            data,
-            config,
-        );
-
-        return response.data;
+        try {
+            const response: AxiosResponse<T> = await this.client.post(
+                url,
+                data,
+                config,
+            );
+            return response.data;
+        } catch (error: any) {
+            error.success = false;
+            return error.response.data;
+        }
     }
 
     public async put<T>(
@@ -64,25 +79,33 @@ class ApiClient {
         data?: unknown,
         config?: AxiosRequestConfig,
     ): Promise<T> {
-        const response: AxiosResponse<T> = await this.client.put(
-            url,
-            data,
-            config,
-        );
-
-        return response.data;
+        try {
+            const response: AxiosResponse<T> = await this.client.put(
+                url,
+                data,
+                config,
+            );
+            return response.data;
+        } catch (error: any) {
+            error.success = false;
+            return error.response.data;
+        }
     }
 
     public async delete<T>(
         url: string,
         config?: AxiosRequestConfig,
     ): Promise<T> {
-        const response: AxiosResponse<T> = await this.client.delete(
-            url,
-            config,
-        );
-
-        return response.data;
+        try {
+            const response: AxiosResponse<T> = await this.client.delete(
+                url,
+                config,
+            );
+            return response.data;
+        } catch (error: any) {
+            error.success = false;
+            return error.response.data;
+        }
     }
 }
 
