@@ -20,15 +20,15 @@ class DatabaseSeeder extends Seeder
             ]);
 
         Calendar::factory()
-            ->count(50)
+            ->count(15)
             ->create();
 
         Event::factory()
-            ->count(500)
+            ->count(250)
             ->create();
 
         CalendarEvent::factory()
-            ->count(500)
+            ->count(250)
             ->create();
     }
 }

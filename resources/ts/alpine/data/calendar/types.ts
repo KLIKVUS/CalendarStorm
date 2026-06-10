@@ -11,10 +11,14 @@ export interface CalendarConfig {
     enableEventsLoading?: boolean;
     enableEventRendering?: boolean;
 
-    calendarId?: number,
+    calendarName?: string;
+    calendarId?: number;
     rights_of_the_current_user?: {
-        is_user_can_create_events?: boolean,
-    },
+        is_user_can_update?: boolean;
+        is_user_can_delete?: boolean;
+        is_user_can_create_events?: boolean;
+    };
+    eventsUrl?: string;
 
     events?: EventData[];
 }

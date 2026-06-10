@@ -3,7 +3,7 @@
         x-show="$store.modal.activeModal == 'ReadEvent'"
         x-transition.opacity
         x-data="{
-            formData: $store.modal.modalsData['EventModal.ReadEvent'],
+            formData: $store.modal.modalsData['EventModal']['ReadEvent'],
             deletingEvent: false,
             deleteEvent: async function() {
                 this.deletingEvent = true;

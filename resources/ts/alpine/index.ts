@@ -13,6 +13,9 @@ import TimePicker from "./data/timePicker";
 import { createBreakpointsStore } from "./store/breakpoints";
 import popup from "./store/popup";
 import modal from "./store/modal";
+import axios from "./store/axios";
+
+import type { CalendarConfig } from "./data/calendar/types";
 
 window.Alpine = Alpine;
 
@@ -25,12 +28,21 @@ Alpine.plugin(validate);
 Alpine.data("localUserSettings", localUserSettings);
 // Функции основного календаря
 const globalCalendarInterface = new CalendarInterface({
+    calendarName: "Global-календарь",
     rights_of_the_current_user: {
-        is_user_can_create_events: true
-    }
+        is_user_can_update: false,
+        is_user_can_delete: false,
+        is_user_can_create_events: false,
+    },
+    eventsUrl: "/events",
 });
 Alpine.data("GlobalCalendar", () => globalCalendarInterface);
-// Функции для скрола при помощи драга
+// Функции персонального календаря
+Alpine.data(
+    "UserCalendar",
+    (config: CalendarConfig) => new CalendarInterface(config),
+);
+// Функции для скролла при помощи драга
 Alpine.data("dragScroll", dragScroll);
 // Селектор даты и времени
 Alpine.data(
@@ -45,10 +57,8 @@ Alpine.data(
 );
 Alpine.data(
     "timePicker",
-    (
-        defaultDate: string,
-        inputId: string,
-    ) => new TimePicker(defaultDate, inputId),
+    (defaultDate: string, inputId: string) =>
+        new TimePicker(defaultDate, inputId),
 );
 
 // Хранилище для точек перелома
@@ -57,6 +67,8 @@ Alpine.store("breakpoints", createBreakpointsStore());
 Alpine.store("popups", popup);
 
 Alpine.store("modal", modal);
+
+Alpine.store("axios", axios);
 
 Alpine.start();
 

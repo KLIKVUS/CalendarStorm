@@ -1,6 +1,8 @@
 <div
     class="absolute bottom-0 left-0 right-0 top-0 z-[2] select-none"
-    x-show="loaderService.isLoading"
+    x-data="{ isOpen: loaderService.data.isLoading }"
+    x-show="isOpen"
+    x-init="$watch('loaderService.data', (value) => isOpen = value.isLoading)"
     x-transition:enter="transition ease-out duration-500 delay-0"
     x-transition:enter-start="opacity-75"
     x-transition:enter-end="opacity-100"

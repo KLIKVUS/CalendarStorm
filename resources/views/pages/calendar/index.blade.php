@@ -4,6 +4,6 @@
 
 @section('content')
     <div class="h-[75vh]">
-        @include('includes.calendar')
+        @include('includes.calendar', ['xData' => 'GlobalCalendar'])
     </div>
 @endsection

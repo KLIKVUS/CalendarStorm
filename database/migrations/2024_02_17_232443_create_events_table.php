@@ -14,7 +14,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->boolean('active')->default(true);
 
-            $table->foreignId('calendar_id')->constrained('calendars');
+            $table->foreignId('calendar_id')->constrained('calendars')->cascadeOnDelete();
             $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
 
             $table->string('name');

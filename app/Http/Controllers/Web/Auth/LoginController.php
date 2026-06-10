@@ -83,7 +83,7 @@ class LoginController extends Controller
         )->plainTextToken;
 
         // Авторизовать пользователя
-        auth()->login($user);
+        auth()->guard('web')->login($user);
 
         // Сохранить токен в сессии
         session()->put('auth_token', $access_token);

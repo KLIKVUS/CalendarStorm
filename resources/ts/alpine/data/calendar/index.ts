@@ -20,10 +20,12 @@ export default class CalendarComponent implements Alpine.AlpineComponent<Calenda
 
     constructor(config: CalendarConfig = {}) {
         this.config = config;
-
         this.loaderService = LoaderService;
         this.scrollService = new ScrollService();
-        this.eventService = new EventService({ events: this.config.events });
+        this.eventService = new EventService({
+            events: this.config.events,
+            config: config,
+        });
         this.calendarService = new CalendarService();
     }
 

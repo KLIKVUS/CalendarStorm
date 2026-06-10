@@ -35,16 +35,16 @@
         <div class="border-t-2 border-gray-200 dark:border-slate-600">
             <x-header.link
                 route="profile.index"
-                :routeParams="['id' => Auth::user()->id]"
+                :routeParams="['user' => Auth::user()->id]"
             >
                 <x-tabler-user class="size-4" />
                 {{ __('Профиль') }}
             </x-header.link>
 
-            <x-header.link route="home.index">
+            {{-- <x-header.link route="home.index">
                 <x-tabler-settings class="size-4" />
                 {{ __('Настройки') }}
-            </x-header.link>
+            </x-header.link> --}}
 
             <div class="border-t-2 border-gray-200 dark:border-slate-600">
                 <form

@@ -83,7 +83,7 @@
                 </template>
             </div>
 
-            <template x-if="config.rights_of_the_current_user.is_user_can_create_events != false">
+            <template x-if="config.rights_of_the_current_user?.is_user_can_create_events && config.rights_of_the_current_user.is_user_can_create_events != false">
                 <x-calendar.buttons.add-event />
             </template>
         </x-calendar.calendar-structure.day>

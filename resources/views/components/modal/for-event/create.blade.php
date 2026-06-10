@@ -4,7 +4,7 @@
         x-show="$store.modal.activeModal == 'CreateEvent'"
         x-transition.opacity
         x-data="{
-            formData: $store.modal.modalsData['EventModal.CreateEvent'],
+            formData: $store.modal.modalsData['EventModal']['CreateEvent'],
             send: async function() {
                 this.sending = true;
                 const payload = Object.fromEntries(

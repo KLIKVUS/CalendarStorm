@@ -13,12 +13,18 @@ const eventDataTemplate = {
         is_user_can_delete: false,
     },
 };
+const calendarDataTemplate = {
+    id: null,
+    name: "",
+};
 
 class ModalService {
     public modalsNames: string[] = [
         "CreateEvent",
         "ReadEvent",
         "UpdateEvent",
+        "CreateCalendar",
+        "UpdateCalendar",
     ];
     public activeModal: string | undefined = undefined;
     public modalsData: { [key: string]: any } = {
@@ -26,6 +32,10 @@ class ModalService {
             CreateEvent: eventDataTemplate,
             ReadEvent: eventDataTemplate,
             UpdateEvent: eventDataTemplate,
+        },
+        CalendarModal: {
+            CreateCalendar: calendarDataTemplate,
+            UpdateCalendar: calendarDataTemplate,
         },
     };
 
@@ -39,8 +49,16 @@ class ModalService {
         this.activeModal = undefined;
     }
 
-    public SetModalData(modalName: string, data: any) {
-        this.modalsData[modalName] = data;
+    public SetModalData(path: string, data: any) {
+        const keys = path.split(".");
+
+        let target = this.modalsData;
+
+        for (let i = 0; i < keys.length - 1; i++) {
+            target = target[keys[i]];
+        }
+
+        target[keys[keys.length - 1]] = data;
     }
 }
 

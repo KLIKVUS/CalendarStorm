@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Auth\LoginController;
 use App\Http\Controllers\Web\Auth\RegisterController;
+use App\Models\Calendar;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,9 +51,32 @@ Route::view('/', 'pages.home.index')->name('home.index');
 Route::view('/calendar', 'pages.calendar.index')->name('calendar.index');
 
 // Профиль пользователя
-Route::view('/profile/{id}', 'pages.profile.index')->name('profile.index');
+Route::get('/profile/{user}', function (Request $request, User $user) {
+    $calendars = Calendar::where('owner_id', $user->id)
+        ->paginate(10);
+
+    $calendar = null;
+
+    if ($request->filled('cal')) {
+        $calendar = $request->filled('cal') ? Calendar::where('owner_id', $user->id)
+            ->findOrFail($request->query('cal')) : null;
+    }
+
+    return view('pages.profile.index', compact('user', 'calendars', 'calendar'));
+})->name('profile.index');
 
 // Все остальное приложение доступно только авторизованным пользователям
 Route::middleware(['auth:sanctum'])->group(function () {
-    // API контроллеры для управления календарями и событиями (можно использовать Laravel Echo для реального времени)
+    Route::delete('/calendars/{calendar}', function (Calendar $calendar) {
+        abort_unless(
+            $calendar->owner_id === auth()->id(),
+            403
+        );
+
+        $calendar->delete();
+
+        return redirect()
+            ->route('profile.index', auth()->user())
+            ->with('success', 'Календарь удалён');
+    })->middleware('auth')->name('calendars.destroy');
 });

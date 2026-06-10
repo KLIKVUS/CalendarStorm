@@ -59,7 +59,7 @@
 
                 <x-header.link route="calendar.index">
                     <x-tabler-calendar-month-f class="size-5"/>
-                    {{ __('Global-календаль') }}
+                    {{ __('Global-календарь') }}
                 </x-header.link>
 
                 <!-- Button Group -->

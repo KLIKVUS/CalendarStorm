@@ -24,10 +24,12 @@ import type {
     EventData,
     EventsByDay,
     DayEventData,
+    CalendarConfig,
 } from "../types";
 import { api } from "../utils/ApiClient";
 
 export default class EventService {
+    public calendarConfig: CalendarConfig = {};
     public eventRender: EventRender;
     public eventController: EventController;
     private receivedEvents: EventData[];
@@ -37,9 +39,22 @@ export default class EventService {
         eventsByDay: {} as EventsByDay,
     });
 
-    constructor({ events = [] }: { events?: EventData[] }) {
+    constructor({
+        events = [],
+        config,
+    }: {
+        events?: EventData[];
+        config?: CalendarConfig;
+    }) {
+        if (config) {
+            this.calendarConfig = config;
+        }
+
         this.eventRender = new EventRender();
-        this.eventController = new EventController(this.events, this.ConvertEventData);
+        this.eventController = new EventController(
+            this.events,
+            this.ConvertEventData,
+        );
         this.receivedEvents = events;
     }
 
@@ -52,22 +67,25 @@ export default class EventService {
         if (this.receivedEvents.length) {
             events = this.ConvertEventData(this.receivedEvents);
         } else if (this.events.length) {
-            console.log(JSON.parse(JSON.stringify(this.events)));
             events = [...this.events];
         } else {
             events = this.ConvertEventData(await this.FetchFromDatabase());
         }
 
-        const sortedEvents = this.SortEventsByDate(events, "asc");
-        const assignEventLayers = this.AssignEventLayers(sortedEvents);
-        this.AssignEventsToDay(assignEventLayers);
-        this.events = assignEventLayers;
+        if (events.length > 0) {
+            const sortedEvents = this.SortEventsByDate(events, "asc");
+            const assignEventLayers = this.AssignEventLayers(sortedEvents);
+            this.AssignEventsToDay(assignEventLayers);
+            this.events = assignEventLayers;
+        }
 
-        LoaderService.removeTask("LoadingEvents");
+        Alpine.nextTick(() => {
+            LoaderService.removeTask("LoadingEvents");
+        });
     }
 
     private async FetchFromDatabase(): Promise<EventData[]> {
-        const res: ApiRes = await api.get("/events");
+        const res: ApiRes = await api.get(this.calendarConfig.eventsUrl || "events");
         const events: EventData[] = res.data;
 
         return events;
@@ -79,8 +97,14 @@ export default class EventService {
     ): GlobalEventData[] {
         return events.sort((a, b) =>
             sortType === "asc"
-                ? compareAsc(new Date(a.data.beginning), new Date(b.data.beginning))
-                : compareDesc(new Date(a.data.beginning), new Date(b.data.beginning)),
+                ? compareAsc(
+                      new Date(a.data.beginning),
+                      new Date(b.data.beginning),
+                  )
+                : compareDesc(
+                      new Date(a.data.beginning),
+                      new Date(b.data.beginning),
+                  ),
         );
     }
 

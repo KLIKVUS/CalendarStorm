@@ -11,7 +11,6 @@
             beginning: `${date} 10:00:00`,
             ending: `${date} 20:00:00`,
         };
-        console.log(newEventData)
         $store.modal.SetModalData('EventModal.CreateEvent', newEventData);
         $store.modal.OpenModal('CreateEvent');
     }"

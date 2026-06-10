@@ -9,7 +9,7 @@
             x-data="{ tab: '{{ $tab }}' }"
         >
             {{-- Табы переключения --}}
-            <div class="flex border-b border-gray-200 dark:border-gray-700">
+            {{-- <div class="flex border-b border-gray-200 dark:border-gray-700">
                 <button
                     class="-mb-px flex-1 py-4 font-medium transition-all duration-200"
                     @click="tab='login'"
@@ -27,7 +27,7 @@
                 >
                     <span>{{ __('Регистрация') }}</span>
                 </button>
-            </div>
+            </div> --}}
 
             {{-- Форма входа --}}
             <div
