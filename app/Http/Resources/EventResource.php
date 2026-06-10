@@ -21,6 +21,10 @@ class EventResource extends JsonResource
             'beginning' => $this->beginning,
             'ending' => $this->ending,
 
+            'owner_id' => $this->owner_id,
+            'calendar_id' => $this->calendar_id,
+            'ending' => $this->ending,
+
             'rights_of_the_current_user' => [
                 $this->attributes(['is_user_can_update']),
                 $this->attributes(['is_user_can_delete']),

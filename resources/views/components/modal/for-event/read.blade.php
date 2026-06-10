@@ -101,6 +101,12 @@
                     ::disabled="deletingEvent"
                 />
             </template>
+            <a
+                class="transition-color w-full cursor-pointer rounded-lg p-2 text-center leading-none underline hover:bg-slate-100 dark:hover:bg-gray-900"
+                :href="'/profile/' + formData.owner_id + '?cal=' + formData.calendar_id"
+            >
+                {{ __('Показать ивент в календаре') }}
+            </a>
             <x-modal.buttons.cancel class="w-full" />
         </div>
     </div>
