@@ -6,7 +6,7 @@ import validate from "@colinaut/alpinejs-plugin-simple-validate";
 
 import localUserSettings from "./data/localUserSettings";
 import CalendarInterface from "./data/calendar/index";
-import dragScroll from "./data/dragScroll";
+// import dragScroll from "./data/dragScroll";
 import DateTimePicker from "./data/dateRangePicker";
 import TimePicker from "./data/timePicker";
 
@@ -43,7 +43,7 @@ Alpine.data(
     (config: CalendarConfig) => new CalendarInterface(config),
 );
 // Функции для скролла при помощи драга
-Alpine.data("dragScroll", dragScroll);
+// Alpine.data("dragScroll", dragScroll);
 // Селектор даты и времени
 Alpine.data(
     "dateRangePicker",

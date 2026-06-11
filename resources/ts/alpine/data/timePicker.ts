@@ -31,7 +31,7 @@ export default class TimePicker {
             defaultDate: this.inputDate,
         });
 
-        this.$watch("inputDate", (value: string) => {
+        (this as any).$watch("inputDate", (value: string) => {
             const time = value.split(':');
             const newDefaultDate = set(this.defaultDate, {
                 hours: Number(time[0]),
