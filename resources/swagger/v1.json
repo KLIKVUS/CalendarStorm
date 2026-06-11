@@ -15,7 +15,7 @@
     ],
     "servers": [
         {
-            "url": "https://calendar-storm.online/api/v1",
+            "url": "https://calendar-storm.klikvus.duckdns.org/api/v1",
             "description": "Prod"
         },
         {
